@@ -1,0 +1,83 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+header {
+  height: 10vh;
+  background-color: aqua;
+}
+main {
+  display: flex;
+  width: 100vw;
+  height: 80vh;
+  background-color: rgb(231, 252, 252);
+}
+footer {
+  height: 10vh;
+  background-color: aqua;
+}
+/*왼쪽 사이드바*/
+main section:nth-of-type(1) {
+  width: 10vw;
+  background-color: rgb(253, 241, 241);
+}
+/*메인화면*/
+main section:nth-of-type(2) {
+  width: 90vw;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+/*메인-검색*/
+#poke-search {
+  height: 10%;
+  width: 100%;
+}
+/*메인-검색외 전체*/
+#poke-search-container {
+  display: flex;
+  flex-direction: row;
+  height: 90%;
+  width: 100%;
+}
+/*메인-왼쪽*/
+#poke-search-box-left {
+  height: 100%;
+  width: 50%;
+}
+#poke-search-box-left #poke-search-card-1 {
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#poke-search-box-left #poke-search-card-1 table {
+  width: 80%;
+  height: 80%;
+  table-layout: fixed;
+}
+#poke-search-box-left #poke-search-card-1 table tr:nth-of-type(3) td {
+  height: 60%;
+}
+#poke-search-box-left #poke-search-card-1 table tr:nth-of-type(3) td img {
+  width: 30%;
+  height: auto;
+}
+#poke-search-box-left #poke-search-card-2 {
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#poke-search-box-left #poke-search-card-2 table {
+  width: 80%;
+  height: 80%;
+  table-layout: fixed;
+}
+/*메인-오른쪽*/
+#poke-search-box-right {
+  height: 100%;
+  width: 50%;
+}
