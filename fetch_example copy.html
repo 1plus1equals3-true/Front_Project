@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>fetch 함수 연습</title>
+  </head>
+  <body>
+    <div>
+      <img class="user-img" src="" alt="" />
+      <p class="user-name">이름 :</p>
+    </div>
+    <div class="user-gender"></div>
+    <div class="user-dob"></div>
+    <div class="user-cell"></div>
+    <div class="user-email"></div>
+    <div class="user-location"></div>
+    <div class="user-iddata"></div>
+
+    <script>
+      // fetch("https://randomuser.me/api/") // promise반환 그안에 값이 response
+      //   .then((response) => {
+      //     //console.log(response); // response객체
+      //     const data = response.json(); // 그 안에 json객체가 안에 존재
+      //     console.log(data); // json 반환값도 promise
+      //     return data;
+      //   }) // 한번더 then해서 데이터를 받음
+      //   .then((result) => {
+      //     console.log(result);
+      //   });
+
+      async function getuser() {
+        const response = await fetch("https://randomuser.me/api/"); // await로 포장풀어 response객체 담음
+        const data = await response.json(); // json도 promise라 await로 포장풀기
+        //console.log(data);
+        const randomuser = data.results[0];
+        console.log(randomuser);
+        document.querySelector(".user-img").src = randomuser.picture.large;
+        document.querySelector(".user-name").textContent =
+          "name : " +
+          randomuser.name.title +
+          " " +
+          randomuser.name.first +
+          " " +
+          randomuser.name.last;
+        document.querySelector(".user-cell").textContent =
+          "cell : " + randomuser.cell + " / " + randomuser.phone;
+        document.querySelector(".user-dob").textContent =
+          "birth : " + randomuser.dob.age + " / " + randomuser.dob.date;
+        document.querySelector(".user-location").textContent =
+          "location : " +
+          randomuser.location.country +
+          " - " +
+          randomuser.location.state +
+          " - " +
+          randomuser.location.city +
+          " - " +
+          randomuser.location.postcode;
+        document.querySelector(".user-gender").textContent =
+          "gender : " + randomuser.gender;
+        document.querySelector(".user-email").textContent =
+          "email : " + randomuser.email;
+        document.querySelector(".user-iddata").textContent =
+          "id : " +
+          randomuser.id.name +
+          " / regdate : " +
+          randomuser.registered.date;
+      }
+      getuser();
+    </script>
+  </body>
+</html>
