@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      body {
+        margin: 0;
+        font-family: "consolas";
+        line-height: 85%;
+        letter-spacing: 1px;
+        font-size: 3px;
+      }
+      pre {
+        margin: 0;
+        font-family: "consolas";
+        line-height: 85%;
+        letter-spacing: 1px;
+        font-size: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <canvas id="canvas" height="1" width="1"></canvas>
+    <h4 id="ex"></h4>
+    <script>
+      let img = new Image();
+      img.src = "poke ball.webp";
+      let canvas = document.querySelector("#canvas");
+      let ctx = canvas.getContext("2d");
+      //let ascii = "█▓▒░:. ";
+      //let ascii = "$@B%8&WM#*oahkbdpqwmZO0QLCJUYXzcvunxrjft/\|()1{}[]?-_+~<>i!lI;:,\"^`'. ";
+      //let ascii = "#*=:. ";
+      //let ascii = "@$#Y!=+~- ";
+      let ascii = " -~+=!Y#$@";
+
+      img.addEventListener("load", () => {
+        let size_x = img.width;
+        let size_y = img.height;
+        canvas.width = size_x;
+        canvas.height = size_y;
+        ctx.drawImage(img, 0, 0, size_x, size_y);
+        let asciiStr = "";
+        for (let j = 0; j < size_y; j += 1) {
+          for (let i = 0; i < size_x; i += 1) {
+            let pixel = ctx.getImageData(i, j, 1, 1).data;
+            let gray = 0.299 * pixel[0] + 0.587 * pixel[1] + 0.114 * pixel[2];
+            let index = Math.min(
+              ascii.length,
+              Math.floor(gray / (256.0 / ascii.length))
+            );
+            // let index = Math.min(
+            //   ascii.length - 1,
+            //   Math.floor(gray / (256.0 / ascii.length))
+            // );
+            asciiStr += ascii[index];
+          }
+          asciiStr += "<br>";
+        }
+        document.querySelector("#ex").innerHTML = asciiStr;
+      });
+    </script>
+  </body>
+</html>

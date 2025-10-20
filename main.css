@@ -4,18 +4,34 @@
   box-sizing: border-box;
 }
 header {
-  height: 10vh;
-  background-color: aqua;
+  min-height: 10vh;
+  background-color: #ffffff;
+  display: flex;
+}
+header pre {
+  margin: 0;
+  font-family: "consolas";
+  line-height: 85%;
+  letter-spacing: 1px;
+  font-size: 3px;
+  color: black;
+  font-weight: bold;
 }
 main {
   display: flex;
   width: 100vw;
-  height: 80vh;
+  min-height: 80vh;
   background-color: rgb(231, 252, 252);
 }
 footer {
-  height: 10vh;
+  min-height: 10vh;
   background-color: aqua;
+}
+#sidenav {
+  text-align: center;
+}
+#sidenav a {
+  text-decoration: none;
 }
 /*왼쪽 사이드바*/
 main section:nth-of-type(1) {
@@ -29,55 +45,192 @@ main section:nth-of-type(2) {
   display: flex;
   flex-direction: column;
   text-align: center;
+  /* 💡 추가/수정: 메인 배경 변경 */
+  background-color: #e0e0e0;
+  padding: 0; /* 내부 패딩 제거 */
 }
 /*메인-검색*/
 #poke-search {
   height: 10%;
   width: 100%;
+  /* 💡 포켓몬 도감 스타일 추가 */
+  background-color: #f7f7f7;
+  padding: 15px 0;
+  border-bottom: 3px solid #ccc;
 }
+
+#poke-search h2 {
+  font-size: 1.2em;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+#name-input {
+  padding: 8px 15px;
+  font-size: 16px;
+  border: 2px solid #a0a0a0;
+  border-radius: 5px;
+  margin-right: 10px;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+  width: 250px;
+  max-width: 40%;
+}
+
+#poke-search button {
+  padding: 8px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  color: white;
+  background-color: #cc0000;
+  border: 3px solid #880000;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+  box-shadow: 0 4px #880000;
+}
+
+#poke-search button:hover {
+  background-color: #ff0000;
+}
+
+#poke-search button:active {
+  background-color: #aa0000;
+  box-shadow: 0 1px #880000;
+  transform: translateY(3px);
+}
+
 /*메인-검색외 전체*/
 #poke-search-container {
   display: flex;
   flex-direction: row;
   height: 90%;
   width: 100%;
+  /* 💡 포켓몬 도감 스타일 추가 */
+  padding: 20px;
+  gap: 20px; /* 좌우 박스 간격 */
 }
 /*메인-왼쪽*/
 #poke-search-box-left {
   height: 100%;
   width: 50%;
-}
-#poke-search-box-left #poke-search-card-1 {
-  height: 50%;
+  /* 💡 기존 flex-direction: column; 설정 제거. HTML 구조에 맞춰 자동으로 세로로 배치됨. */
   display: flex;
-  justify-content: center;
-  align-items: center;
+  flex-direction: column;
+  gap: 20px; /* 카드 1, 2 사이 간격 */
 }
-#poke-search-box-left #poke-search-card-1 table {
-  width: 80%;
-  height: 80%;
-  table-layout: fixed;
-}
-#poke-search-box-left #poke-search-card-1 table tr:nth-of-type(3) td {
-  height: 60%;
-}
-#poke-search-box-left #poke-search-card-1 table tr:nth-of-type(3) td img {
-  width: 30%;
-  height: auto;
-}
-#poke-search-box-left #poke-search-card-2 {
-  height: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#poke-search-box-left #poke-search-card-2 table {
-  width: 80%;
-  height: 80%;
-  table-layout: fixed;
-}
+
 /*메인-오른쪽*/
 #poke-search-box-right {
   height: 100%;
   width: 50%;
+  /* 💡 포켓몬 도감 스타일 추가 */
+  display: flex;
+  flex-direction: column;
+  gap: 20px; /* 카드 3, 4 사이 간격 */
+}
+
+/* --- 개별 정보 카드 스타일 (액정 화면 느낌) --- */
+#poke-search-card-1,
+#poke-search-card-2,
+#poke-search-card-3,
+#poke-search-card-4 {
+  background-color: #d8e5f2; /* 연한 하늘색/청회색 (도감 액정 색상) */
+  border: 3px solid #333;
+  border-radius: 8px;
+  box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
+  padding: 5px;
+  /* 💡 기존 높이 50% 설정 유지 */
+  height: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+/* 기존에 설정된 #poke-search-card-2 table 스타일을 덮어쓰거나 수정합니다. */
+#poke-search-box-left #poke-search-card-2 table {
+  width: 90%;
+  height: 90%;
+  table-layout: fixed; /* 💡 추가/수정: 셀 크기를 고정 너비로 분할합니다. */
+  /* border-collapse, text-align 등의 다른 스타일은 그대로 둡니다. */
+}
+
+/* 종족값 헤더와 데이터 셀의 너비를 동일하게 설정 */
+#poke-stats tr:nth-child(2) td, /* HP, 공격, 방어 등 헤더 셀 */
+#poke-stats tr:nth-child(3) td {
+  /* 35, 55, 40 등 데이터 셀 */
+  /* 💡 수정: 100%를 6개의 열로 동일하게 나눕니다. */
+  width: calc(100% / 6);
+}
+
+/* --- 테이블 공통 스타일 --- */
+#poke-info,
+#poke-stats {
+  width: 90%; /* 기존 80%보다 약간 늘려서 사용 */
+  height: 90%;
+  border-collapse: collapse;
+  text-align: center;
+  border: none;
+  font-size: 14px;
+  box-shadow: 0 0 0 1px #444; /* 테이블 전체에 얇은 테두리 */
+}
+
+/* 테이블의 모든 셀(td) 스타일 */
+#poke-info td,
+#poke-stats td {
+  padding: 6px 4px;
+  border: 1px solid #aaa;
+  font-weight: 500;
+}
+
+/* --- 테이블 제목 행 (기본정보, 종족값) 스타일 --- */
+#poke-info tr:first-child td,
+#poke-stats tr:first-child td {
+  background-color: #2196f3;
+  color: white;
+  font-weight: bold;
+  font-size: 1.1em;
+  border-color: #2196f3;
+}
+
+/* --- 헤더 행 (모습, 이름, HP 등) 스타일 --- */
+#poke-info tr:nth-child(2) td,
+#poke-stats tr:nth-child(2) td {
+  background-color: #607d8b;
+  color: white;
+  font-weight: bold;
+  border-color: #607d8b;
+}
+
+/* --- 포켓몬 이미지 스타일 --- */
+#poke-info tr:nth-child(3) td:nth-child(1) {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+#poke-info tr:nth-child(3) td:nth-child(1) img {
+  /* 기존 30%를 유지 */
+  width: 40%;
+  height: auto;
+  object-fit: contain;
+}
+
+/* --- 이름(pokename) 및 도감번호(pokedex_id) 강조 --- */
+#pokename {
+  font-size: 1.4em;
+  font-weight: 900;
+  color: #ff5722;
+}
+#pokedex_id {
+  font-size: 1.1em;
+  font-weight: bold;
+  color: #3f51b5;
+}
+
+/* --- 종족값 (Base Stats) 값 행 스타일 --- */
+#poke-stats tr:nth-child(3) td {
+  font-weight: bold;
+  font-size: 1.1em;
+  background-color: #f0f0f0;
 }

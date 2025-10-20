@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -13,25 +13,21 @@
       <section id="sidenav"></section>
       <section>
         <div id="poke-search">
-          <h2>이름 또는 도감번호</h2>
           <input
             type="text"
             id="name-input"
             list="search-list"
             placeholder="이름 입력"
-            value="25"
+            value="피카츄"
           />
-          <datalist id="search-list">
-            <option value="피카츄"></option>
-            <option value="라이츄"></option>
-          </datalist>
+          <datalist id="search-list"> </datalist>
           <button onclick="getValues()">값 가져오기</button>
         </div>
 
         <div id="poke-search-container">
           <div id="poke-search-box-left">
             <div id="poke-search-card-1">
-              <table id="poke-info" border="1">
+              <table id="poke-info">
                 <tr>
                   <td colspan="3">기본정보</td>
                 </tr>
@@ -45,14 +41,16 @@
                     <img src="" alt="" />
                     <img src="" alt="" />
                   </td>
-                  <td>피카츄</td>
-                  <td>전국도감 25</td>
+                  <td colspan="2">
+                    <div id="pokename">피카츄</div>
+                    <div id="pokedex_id">도감번호 25</div>
+                  </td>
                 </tr>
               </table>
             </div>
 
             <div id="poke-search-card-2">
-              <table id="poke-stats" border="1">
+              <table id="poke-stats">
                 <tr>
                   <td colspan="6">종족값</td>
                 </tr>
@@ -65,12 +63,12 @@
                   <td>스피드</td>
                 </tr>
                 <tr>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
-                  <td>0</td>
+                  <td>35</td>
+                  <td>55</td>
+                  <td>40</td>
+                  <td>50</td>
+                  <td>50</td>
+                  <td>90</td>
                 </tr>
               </table>
             </div>
