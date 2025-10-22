@@ -13,70 +13,65 @@
       <section id="sidenav"></section>
       <section>
         <div id="poke-search">
-          <input
-            type="text"
-            id="name-input"
-            list="search-list"
-            placeholder="이름 입력"
-            value="피카츄"
-          />
-          <datalist id="search-list"> </datalist>
-          <button onclick="getValues()">값 가져오기</button>
+          <form id="poke-search-form">
+            <input
+              type="text"
+              id="name-input"
+              list="search-list"
+              placeholder="이름 입력"
+              value="피카츄"
+            />
+            <datalist id="search-list"> </datalist>
+            <button onclick="getValues()">값 가져오기</button>
+          </form>
         </div>
 
         <div id="poke-search-container">
           <div id="poke-search-box-left">
             <div id="poke-search-card-1">
-              <table id="poke-info">
-                <tr>
-                  <td colspan="3">기본정보</td>
-                </tr>
-                <tr>
-                  <td>모습</td>
-                  <td>이름</td>
-                  <td>도감번호</td>
-                </tr>
-                <tr>
-                  <td>
-                    <img src="" alt="" />
-                    <img src="" alt="" />
-                  </td>
-                  <td colspan="2">
-                    <div id="pokename">피카츄</div>
-                    <div id="pokedex_id">도감번호 25</div>
-                  </td>
-                </tr>
-              </table>
+              <div class="card-title">기본 정보</div>
+              <div class="card1-content-box">
+                <div class="sprite-container">
+                  <img id="sprite-default" src="" alt="기본 모습" />
+                  <img id="sprite-shiny" src="" alt="이로치 모습" />
+                </div>
+                <div class="name-id-container">
+                  <div id="pokename" class="pokemon-name">피카츄</div>
+                  <div id="pokedex_id" class="pokemon-id">도감번호 25</div>
+                </div>
+              </div>
             </div>
 
             <div id="poke-search-card-2">
-              <table id="poke-stats">
-                <tr>
-                  <td colspan="6">종족값</td>
-                </tr>
-                <tr>
-                  <td>HP</td>
-                  <td>공격</td>
-                  <td>방어</td>
-                  <td>특수공격</td>
-                  <td>특수방어</td>
-                  <td>스피드</td>
-                </tr>
-                <tr>
-                  <td>35</td>
-                  <td>55</td>
-                  <td>40</td>
-                  <td>50</td>
-                  <td>50</td>
-                  <td>90</td>
-                </tr>
-              </table>
+              <div class="card-title">종족값</div>
+              <div class="stats-grid-container">
+                <div class="stat-label">HP</div>
+                <div class="stat-label">공격</div>
+                <div class="stat-label">방어</div>
+                <div class="stat-label">특수공격</div>
+                <div class="stat-label">특수방어</div>
+                <div class="stat-label">스피드</div>
+
+                <div id="stat-hp" class="base-stat-value">35</div>
+                <div id="stat-attack" class="base-stat-value">55</div>
+                <div id="stat-defense" class="base-stat-value">40</div>
+                <div id="stat-special-attack" class="base-stat-value">50</div>
+                <div id="stat-special-defense" class="base-stat-value">50</div>
+                <div id="stat-speed" class="base-stat-value">90</div>
+              </div>
             </div>
           </div>
 
           <div id="poke-search-box-right">
             <div id="poke-search-card-3"></div>
-            <div id="poke-search-card-4"></div>
+            <div id="poke-search-card-4">
+              <div class="card-title">타입 상성</div>
+              <div id="weak4" class="weak"></div>
+              <div id="weak2" class="weak"></div>
+              <div id="weak0.5" class="weak"></div>
+              <div id="weak0.25" class="weak"></div>
+              <div id="weak0" class="weak"></div>
+            </div>
           </div>
         </div>
       </section>

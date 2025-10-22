@@ -1,68 +1,104 @@
+/* ======================================================================
+ * 1. 기본 설정 및 레이아웃 (GLOBAL & LAYOUT)
+ * ====================================================================== */
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
+
+html,
+body {
+  height: 100%;
+  overflow-x: hidden; /* 가로 스크롤바 제거 */
+}
+
 header {
   min-height: 10vh;
   background-color: #ffffff;
   display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 5px solid #cc0000;
 }
+
 header pre {
   margin: 0;
-  font-family: "consolas";
+  font-family: "consolas", monospace;
   line-height: 85%;
   letter-spacing: 1px;
   font-size: 3px;
   color: black;
   font-weight: bold;
+  white-space: pre; /* pre 태그 속성 유지 */
 }
+
 main {
   display: flex;
   width: 100vw;
   min-height: 80vh;
   background-color: rgb(231, 252, 252);
 }
+
 footer {
   min-height: 10vh;
-  background-color: aqua;
+  background-color: #333;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
+/* ======================================================================
+ * 2. 사이드바 (SIDENAV)
+ * ====================================================================== */
 #sidenav {
   text-align: center;
+  width: 10vw;
+  min-width: 80px; /* 최소 너비 설정 */
+  background-color: rgb(253, 241, 241);
+  padding: 10px 0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
+
 #sidenav a {
   text-decoration: none;
+  display: block;
+  padding: 10px 0;
+  color: #333;
+  font-weight: 500;
+  transition: background-color 0.2s;
 }
-/*왼쪽 사이드바*/
-main section:nth-of-type(1) {
-  width: 10vw;
-  background-color: rgb(253, 241, 241);
+
+#sidenav a:hover {
+  background-color: rgba(255, 0, 0, 0.1);
+  color: #cc0000;
 }
-/*메인화면*/
+
+/* ======================================================================
+ * 3. 메인 콘텐츠 및 검색 영역 (MAIN CONTENT & SEARCH)
+ * ====================================================================== */
 main section:nth-of-type(2) {
-  width: 90vw;
-  margin: 0 auto;
+  flex-grow: 1; /* 남은 공간을 모두 사용 */
+  width: 90vw; /* (유연성을 위해 flex-grow 사용 권장) */
   display: flex;
   flex-direction: column;
   text-align: center;
-  /* 💡 추가/수정: 메인 배경 변경 */
-  background-color: #e0e0e0;
-  padding: 0; /* 내부 패딩 제거 */
+  background-color: #e0e0e0; /* 연한 회색 배경 */
+  padding: 0;
 }
-/*메인-검색*/
-#poke-search {
-  height: 10%;
+
+/* 메인 - 검색 폼 (form으로 변경 가정) */
+#poke-search-form {
+  /* ID를 poke-search-form으로 가정 */
+  height: auto;
   width: 100%;
-  /* 💡 포켓몬 도감 스타일 추가 */
   background-color: #f7f7f7;
   padding: 15px 0;
   border-bottom: 3px solid #ccc;
-}
-
-#poke-search h2 {
-  font-size: 1.2em;
-  color: #444;
-  margin-bottom: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 #name-input {
@@ -76,7 +112,7 @@ main section:nth-of-type(2) {
   max-width: 40%;
 }
 
-#poke-search button {
+#poke-search-form button {
   padding: 8px 20px;
   font-size: 16px;
   font-weight: bold;
@@ -89,47 +125,48 @@ main section:nth-of-type(2) {
   box-shadow: 0 4px #880000;
 }
 
-#poke-search button:hover {
+#poke-search-form button:hover {
   background-color: #ff0000;
 }
 
-#poke-search button:active {
+#poke-search-form button:active {
   background-color: #aa0000;
   box-shadow: 0 1px #880000;
   transform: translateY(3px);
 }
 
-/*메인-검색외 전체*/
+/* 메인-검색외 전체 (정보 컨테이너) */
 #poke-search-container {
   display: flex;
   flex-direction: row;
-  height: 90%;
+  flex-grow: 1; /* 남은 세로 공간을 모두 사용 */
   width: 100%;
-  /* 💡 포켓몬 도감 스타일 추가 */
   padding: 20px;
-  gap: 20px; /* 좌우 박스 간격 */
+  gap: 20px;
+  min-height: 500px; /* 최소 높이 보장 */
 }
-/*메인-왼쪽*/
+
+/* 메인-왼쪽 (카드 1, 2) */
 #poke-search-box-left {
   height: 100%;
   width: 50%;
-  /* 💡 기존 flex-direction: column; 설정 제거. HTML 구조에 맞춰 자동으로 세로로 배치됨. */
   display: flex;
   flex-direction: column;
-  gap: 20px; /* 카드 1, 2 사이 간격 */
+  gap: 20px;
 }
 
-/*메인-오른쪽*/
+/* 메인-오른쪽 (카드 3, 4) */
 #poke-search-box-right {
   height: 100%;
   width: 50%;
-  /* 💡 포켓몬 도감 스타일 추가 */
   display: flex;
   flex-direction: column;
-  gap: 20px; /* 카드 3, 4 사이 간격 */
+  gap: 20px;
 }
 
-/* --- 개별 정보 카드 스타일 (액정 화면 느낌) --- */
+/* ======================================================================
+ * 4. 정보 카드 공통 스타일 (CARD 1, 2, 3, 4)
+ * ====================================================================== */
 #poke-search-card-1,
 #poke-search-card-2,
 #poke-search-card-3,
@@ -138,99 +175,219 @@ main section:nth-of-type(2) {
   border: 3px solid #333;
   border-radius: 8px;
   box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.2);
-  padding: 5px;
-  /* 💡 기존 높이 50% 설정 유지 */
+  padding: 15px;
   height: 50%;
+  /* flex-flow: column; flex-wrap: wrap; justify-content: center; align-items: center; 제거 */
   display: flex;
-  justify-content: center;
-  align-items: center;
-}
-/* 기존에 설정된 #poke-search-card-2 table 스타일을 덮어쓰거나 수정합니다. */
-#poke-search-box-left #poke-search-card-2 table {
-  width: 90%;
-  height: 90%;
-  table-layout: fixed; /* 💡 추가/수정: 셀 크기를 고정 너비로 분할합니다. */
-  /* border-collapse, text-align 등의 다른 스타일은 그대로 둡니다. */
+  flex-direction: column;
+  text-align: left; /* 내부 텍스트 정렬 기본값 설정 */
 }
 
-/* 종족값 헤더와 데이터 셀의 너비를 동일하게 설정 */
-#poke-stats tr:nth-child(2) td, /* HP, 공격, 방어 등 헤더 셀 */
-#poke-stats tr:nth-child(3) td {
-  /* 35, 55, 40 등 데이터 셀 */
-  /* 💡 수정: 100%를 6개의 열로 동일하게 나눕니다. */
-  width: calc(100% / 6);
-}
-
-/* --- 테이블 공통 스타일 --- */
-#poke-info,
-#poke-stats {
-  width: 90%; /* 기존 80%보다 약간 늘려서 사용 */
-  height: 90%;
-  border-collapse: collapse;
+.card-title {
+  font-size: 1.2em;
+  font-weight: bold;
+  color: #0077b6; /* 도감 UI 강조색 */
+  border-bottom: 2px solid #aaa;
+  padding-bottom: 5px;
+  margin-bottom: 15px;
   text-align: center;
-  border: none;
-  font-size: 14px;
-  box-shadow: 0 0 0 1px #444; /* 테이블 전체에 얇은 테두리 */
 }
 
-/* 테이블의 모든 셀(td) 스타일 */
-#poke-info td,
-#poke-stats td {
-  padding: 6px 4px;
-  border: 1px solid #aaa;
-  font-weight: 500;
-}
-
-/* --- 테이블 제목 행 (기본정보, 종족값) 스타일 --- */
-#poke-info tr:first-child td,
-#poke-stats tr:first-child td {
-  background-color: #2196f3;
-  color: white;
-  font-weight: bold;
-  font-size: 1.1em;
-  border-color: #2196f3;
-}
-
-/* --- 헤더 행 (모습, 이름, HP 등) 스타일 --- */
-#poke-info tr:nth-child(2) td,
-#poke-stats tr:nth-child(2) td {
-  background-color: #607d8b;
-  color: white;
-  font-weight: bold;
-  border-color: #607d8b;
-}
-
-/* --- 포켓몬 이미지 스타일 --- */
-#poke-info tr:nth-child(3) td:nth-child(1) {
-  height: 100%;
+/* ======================================================================
+ * 5. 카드 1: 기본 정보 (DIV 기반)
+ * ====================================================================== */
+.card1-content-box {
   display: flex;
+  align-items: center;
+  gap: 20px;
+  flex-grow: 1; /* 컨테이너 내에서 높이를 채우도록 허용 */
+}
+
+.sprite-container {
+  display: flex;
+  width: 200px;
+  height: 200px;
+  flex-shrink: 0; /* 크기가 줄어들지 않게 함 */
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
+  background-color: #e6e6e6; /* 스프라이트 배경 */
+  border: 3px solid #888;
+  border-radius: 5px;
 }
 
-#poke-info tr:nth-child(3) td:nth-child(1) img {
-  /* 기존 30%를 유지 */
-  width: 40%;
-  height: auto;
+.sprite-container img {
+  /* 기존 이미지 크기 수정 */
+  width: 100px;
+  height: 100px;
+  image-rendering: pixelated;
+  /* 이미지 간격 조정 */
+  margin: 2px;
   object-fit: contain;
 }
 
-/* --- 이름(pokename) 및 도감번호(pokedex_id) 강조 --- */
-#pokename {
-  font-size: 1.4em;
+.name-id-container {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  text-align: left;
+}
+
+.pokemon-name {
+  font-size: 1.8em;
   font-weight: 900;
   color: #ff5722;
+  margin-bottom: 5px;
+  /* 줄바꿈 방지 */
+  white-space: nowrap;
 }
-#pokedex_id {
-  font-size: 1.1em;
+
+.pokemon-id {
+  font-size: 1.2em;
   font-weight: bold;
   color: #3f51b5;
 }
 
-/* --- 종족값 (Base Stats) 값 행 스타일 --- */
-#poke-stats tr:nth-child(3) td {
+/* ======================================================================
+ * 6. 카드 2: 종족값 (GRID 기반)
+ * ====================================================================== */
+#poke-search-card-2 {
+  /* flex-direction: column;은 card 공통에 있음 */
+  justify-content: flex-start; /* 상단부터 채우기 */
+}
+
+.stats-grid-container {
+  /* 2줄 6칸 그리드 */
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  grid-template-rows: auto auto; /* 제목과 값 */
+  text-align: center;
+  gap: 5px 2px;
+  flex-grow: 1;
+  align-content: flex-start; /* 그리드 시작점을 상단에 고정 */
+}
+
+.stat-label {
   font-weight: bold;
+  font-size: 0.9em;
+  padding: 5px 0;
+  background-color: #3f51b5; /* 파란색 계열 배경 */
+  color: white;
+  border-radius: 3px;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.2);
+}
+
+.base-stat-value {
   font-size: 1.1em;
-  background-color: #f0f0f0;
+  font-weight: bold;
+  padding: 5px 0;
+  background-color: #f0f0f0; /* 값 배경 */
+  border-radius: 3px;
+  color: #333;
+}
+
+/* ======================================================================
+ * 7. 카드 4: 타입 상성 (WEAKNESS)
+ * ====================================================================== */
+#poke-search-card-4 {
+  /* 내부 콘텐츠가 왼쪽 정렬되도록 */
+  align-items: stretch;
+  justify-content: flex-start;
+}
+
+/* 각 배율 라인 (weak4, weak2 등) */
+.weak {
+  width: 100%; /* 부모 너비 전체 사용 */
+  height: auto; /* 내용에 따라 높이 자동 조절 */
+  display: flex;
+  flex-wrap: wrap; /* 타입 태그가 많아지면 줄바꿈 */
+  align-items: center;
+  margin-bottom: 8px;
+  padding: 4px 0;
+}
+
+.multiplier-title {
+  font-size: 1.1em;
+  font-weight: bold;
+  margin-right: 10px;
+  white-space: nowrap;
+  color: #444;
+  padding-left: 5px;
+}
+
+/* 모든 타입 태그에 적용되는 공통 스타일 */
+.type-tag {
+  /* 작은 캡슐 모양으로 조정 */
+  width: auto; /* 내용 길이에 맞춰 너비 자동 조절 */
+  min-width: 40px;
+  height: 24px;
+  font-size: 14px;
+  color: white;
+  margin-right: 6px;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  padding: 0 8px; /* 좌우 패딩으로 텍스트 주변 공간 확보 */
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px; /* 캡슐 모양 */
+  font-weight: 500;
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* 각 타입별 배경색 (PokeAPI 타입명으로 ID 지정) */
+#normal {
+  background-color: rgb(168, 168, 120);
+}
+#fire {
+  background-color: rgb(240, 128, 48);
+}
+#water {
+  background-color: rgb(104, 144, 240);
+}
+#grass {
+  background-color: rgb(120, 200, 80);
+}
+#electric {
+  background-color: rgb(248, 208, 48);
+}
+#ice {
+  background-color: rgb(152, 216, 216);
+}
+#fighting {
+  background-color: rgb(192, 48, 40);
+}
+#poison {
+  background-color: rgb(160, 64, 160);
+}
+#ground {
+  background-color: rgb(224, 192, 104);
+}
+#flying {
+  background-color: rgb(168, 144, 240);
+}
+#psychic {
+  background-color: rgb(248, 88, 136);
+}
+#bug {
+  background-color: rgb(168, 184, 32);
+}
+#rock {
+  background-color: rgb(184, 160, 56);
+}
+#ghost {
+  background-color: rgb(112, 88, 152);
+}
+#dragon {
+  background-color: rgb(112, 56, 248);
+}
+#steel {
+  background-color: rgb(184, 184, 208);
+}
+#dark {
+  background-color: rgb(112, 88, 72);
+}
+#fairy {
+  background-color: rgb(238, 153, 172);
 }

@@ -16,6 +16,29 @@ const JSON_FILE_PATH = "./poke_name.json";
 
 let pokemonNames = {};
 
+const typeNamesKorean = {
+  normal: "노말",
+  fighting: "격투",
+  flying: "비행",
+  poison: "독",
+  ground: "땅",
+  rock: "바위",
+  bug: "벌레",
+  ghost: "고스트",
+  steel: "강철",
+  fire: "불꽃",
+  water: "물",
+  grass: "풀",
+  electric: "전기",
+  psychic: "에스퍼",
+  ice: "얼음",
+  dragon: "드래곤",
+  dark: "악",
+  fairy: "페어리",
+  unknown: "???", // 기타 타입 (선택 사항)
+  shadow: "다크", // 기타 타입 (선택 사항)
+};
+
 async function loadPokemonData() {
   try {
     const response = await fetch(JSON_FILE_PATH);
@@ -24,7 +47,6 @@ async function loadPokemonData() {
     }
     const data = await response.json();
     pokemonNames = data;
-    console.log("포켓몬 데이터 로드 완료:", pokemonNames);
   } catch (error) {
     console.error("데이터를 불러오는 중 오류 발생:", error);
   }
@@ -51,18 +73,16 @@ function getValues() {
     document.getElementById(
       "pokename"
     ).textContent = `${name}의 정보는 찾을 수 없습니다.`;
-    // 오류 시 정보 초기화 로직 (선택 사항)
+    // 오류 시 정보 초기화
     document.getElementById("pokedex_id").textContent = "";
-    document.querySelector(
-      "#poke-info tr:nth-child(3) td:nth-child(1) img:nth-child(1)"
-    ).src = "";
-    document.querySelector(
-      "#poke-info tr:nth-child(3) td:nth-child(1) img:nth-child(2)"
-    ).src = ""; // <-- 이미지 초기화
-    const statsCells = document.querySelectorAll(
-      "#poke-stats tr:nth-child(3) td"
-    );
-    statsCells.forEach((cell) => (cell.innerHTML = "-"));
+    document.getElementById("sprite-default").src = "";
+    document.getElementById("sprite-shiny").src = "";
+    document.getElementById("stat-hp").textContent = "-";
+    document.getElementById("stat-attack").textContent = "-";
+    document.getElementById("stat-defense").textContent = "-";
+    document.getElementById("stat-special-attack").textContent = "-";
+    document.getElementById("stat-special-defense").textContent = "-";
+    document.getElementById("stat-speed").textContent = "-";
     return;
   }
 
@@ -78,44 +98,34 @@ function getValues() {
     })
     // 2단계: DOM 업데이트 및 타입 상성 Promise 배열 생성
     .then((pokeData) => {
-      console.log("✅ 포켓몬 기본 정보 로드 완료");
-
       // ----------------------------------------------------
       // ⭐ 기존의 모든 DOM 업데이트 로직 ⭐
       // ----------------------------------------------------
-      console.log(`이름: ${pokeData.name}`);
-      console.log(`T: ${pokeData.types.map((t) => t.type.name).join(", ")}`);
+      console.log(`포켓몬 : ${pokeData.name}`);
 
+      // 카드 1 업데이트
       document.getElementById(
         "pokedex_id"
       ).textContent = `전국도감 ${pokeData.id}`;
+      document.getElementById("sprite-default").src =
+        pokeData.sprites.front_default;
+      document.getElementById("sprite-shiny").src =
+        pokeData.sprites.front_shiny;
 
-      // 💡 이미지 출력 코드: pokeData에서 바로 가져와서 업데이트됩니다.
-      document.querySelector(
-        "#poke-info tr:nth-child(3) td:nth-child(1) img:nth-child(1)"
-      ).src = pokeData.sprites.front_default;
-      document.querySelector(
-        "#poke-info tr:nth-child(3) td:nth-child(1) img:nth-child(2)"
-      ).src = pokeData.sprites.front_shiny;
-
-      document.querySelector(
-        "#poke-stats tr:nth-child(3) td:nth-child(1)"
-      ).innerHTML = pokeData.stats[0].base_stat;
-      document.querySelector(
-        "#poke-stats tr:nth-child(3) td:nth-child(2)"
-      ).innerHTML = pokeData.stats[1].base_stat;
-      document.querySelector(
-        "#poke-stats tr:nth-child(3) td:nth-child(3)"
-      ).innerHTML = pokeData.stats[2].base_stat;
-      document.querySelector(
-        "#poke-stats tr:nth-child(3) td:nth-child(4)"
-      ).innerHTML = pokeData.stats[3].base_stat;
-      document.querySelector(
-        "#poke-stats tr:nth-child(3) td:nth-child(5)"
-      ).innerHTML = pokeData.stats[4].base_stat;
-      document.querySelector(
-        "#poke-stats tr:nth-child(3) td:nth-child(6)"
-      ).innerHTML = pokeData.stats[5].base_stat;
+      // 카드 2 업데이트
+      // 스탯 배열 순서: 0:HP, 1:Attack, 2:Defense, 3:Sp.Attack, 4:Sp.Defense, 5:Speed
+      document.getElementById("stat-hp").textContent =
+        pokeData.stats[0].base_stat;
+      document.getElementById("stat-attack").textContent =
+        pokeData.stats[1].base_stat;
+      document.getElementById("stat-defense").textContent =
+        pokeData.stats[2].base_stat;
+      document.getElementById("stat-special-attack").textContent =
+        pokeData.stats[3].base_stat;
+      document.getElementById("stat-special-defense").textContent =
+        pokeData.stats[4].base_stat;
+      document.getElementById("stat-speed").textContent =
+        pokeData.stats[5].base_stat;
 
       // ----------------------------------------------------
       // 3. 타입 상성 API 호출을 위한 준비
@@ -133,8 +143,6 @@ function getValues() {
     })
     // 4단계: 상성 데이터를 통합하여 최종 상성을 계산합니다.
     .then((allTypeData) => {
-      console.log("✅ 모든 타입 상성 정보 로드 완료, 최종 상성 계산 시작");
-
       const finalDamageMap = new Map();
 
       allTypeData.forEach((typeData) => {
@@ -183,17 +191,55 @@ function getValues() {
         // 1배 상쇄 타입은 출력에서 제외 (너무 많아지기 때문)
       });
 
-      console.log("\n=============================================");
-      console.log(`🛡️ ${name.toUpperCase()} (최종 방어 상성)`);
-      console.log("=============================================");
-
       // 6. 최종 결과 출력
+      // 기존의 모든 상성 Div 내부를 비웁니다. (새로운 검색 전에 초기화)
+      document.querySelectorAll("#poke-search-card-4 .weak").forEach((div) => {
+        div.innerHTML = "";
+      });
+
+      // 배율별 DOM 요소를 매핑합니다.
+      const multiplierToId = {
+        "4배 (이중 약점)": "weak4",
+        "2배 (약점)": "weak2",
+        "0.5배 (저항)": "weak0.5",
+        "0.25배 (이중 저항)": "weak0.25",
+        "0배 (면역)": "weak0",
+      };
+
+      // finalResults를 순회하며 타입 태그를 생성하고 삽입합니다.
       Object.keys(finalResults).forEach((key) => {
-        if (finalResults[key].length > 0) {
-          console.log(`[${key}]: ${finalResults[key].join(", ")}`);
+        const targetId = multiplierToId[key];
+        const targetDiv = document.getElementById(targetId);
+
+        // 해당 배율에 타입이 하나라도 존재할 때만 제목과 타입을 출력
+        if (targetDiv && finalResults[key].length > 0) {
+          // 배율 제목 동적 생성
+          const titleDiv = document.createElement("div");
+          titleDiv.classList.add("multiplier-title");
+          titleDiv.textContent = `${key} : `;
+
+          targetDiv.appendChild(titleDiv);
+
+          // 각 타입 이름(영어명)에 대해 div 태그를 생성하고 삽입합니다.
+          finalResults[key].forEach((typeName) => {
+            const typeDiv = document.createElement("div");
+
+            // div의 id를 타입 이름(예: 'rock', 'electric')으로 설정합니다.
+            typeDiv.id = typeName;
+
+            // type-tag 클래스 추가
+            typeDiv.classList.add("type-tag");
+
+            // 타입 이름을 텍스트로 표시합니다.
+            const koreanName =
+              typeNamesKorean[typeName.toLowerCase()] || typeName;
+            typeDiv.textContent = koreanName;
+
+            // 해당 배율 Div에 생성된 타입 태그를 추가합니다.
+            targetDiv.appendChild(typeDiv);
+          });
         }
       });
-      console.log("=============================================\n");
     })
     .catch((error) => {
       console.error("오류 발생:", error.message);
@@ -216,31 +262,35 @@ function populateDatalist() {
     option.value = name;
     datalist.appendChild(option);
   });
-
-  console.log(
-    `datalist에 ${koreanNames.length}개의 포켓몬 이름이 추가되었습니다.`
-  );
 }
 
-// --- 최종 실행 로직 (버튼 클릭 연결을 위해 DOMContentLoaded 사용 권장) ---
+// --- 최종 실행 로직 ---
 document.addEventListener("DOMContentLoaded", () => {
   // 1. HTML 조각 로드
   importPage("header");
   importPage("footer");
   importPage("sidenav");
 
+  // 폼 요소와 입력 버튼을 가져옵니다.
+  const searchForm = document.getElementById("poke-search-form");
+  const nameInput = document.getElementById("name-input");
+
   // 2. 데이터 로드 후 나머지 기능 실행
   loadPokemonData().then(() => {
     populateDatalist();
 
-    // 3. 버튼 클릭 이벤트 연결 (HTML의 onclick="getValues()" 대신 사용 권장)
-    const searchButton = document.getElementById("search-button");
-    if (searchButton) {
-      searchButton.addEventListener("click", getValues);
-    } else {
-      // 버튼이 없는 경우를 대비해 초기 검색 실행
-      getValues();
+    // 3. 폼 제출 이벤트(Enter 키 포함)를 처리합니다.
+    if (searchForm) {
+      searchForm.addEventListener("submit", (event) => {
+        // ❗ 가장 중요: 폼의 기본 제출 동작(페이지 새로고침)을 막습니다.
+        event.preventDefault();
+
+        // 검색 함수를 호출합니다.
+        getValues();
+      });
     }
+
+    // 초기 검색 실행 (페이지 로드 시 "피카츄" 등으로 초기 검색)
+    getValues();
   });
 });
-// 기존 loadPokemonData().then(() => { ... }) 코드는 위 DOMContentLoaded 블록으로 대체되었습니다.
