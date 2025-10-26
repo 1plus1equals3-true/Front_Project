@@ -1,92 +1,6 @@
 /* ======================================================================
- * 1. 기본 설정 및 레이아웃 (GLOBAL & LAYOUT)
- * ====================================================================== */
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-html,
-body {
-  height: 100%;
-  overflow-x: hidden; /* 가로 스크롤바 제거 */
-}
-
-header {
-  min-height: 10vh;
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  padding: 0 20px;
-  border-bottom: 5px solid #cc0000;
-}
-
-header pre {
-  margin: 0;
-  font-family: "consolas", monospace;
-  line-height: 85%;
-  letter-spacing: 1px;
-  font-size: 3px;
-  color: black;
-  font-weight: bold;
-  white-space: pre; /* pre 태그 속성 유지 */
-}
-
-main {
-  display: flex;
-  width: 100vw;
-  min-height: 80vh;
-  background-color: rgb(231, 252, 252);
-}
-
-footer {
-  min-height: 10vh;
-  background-color: #333;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-/* ======================================================================
- * 2. 사이드바 (SIDENAV)
- * ====================================================================== */
-#sidenav {
-  text-align: center;
-  width: 10vw;
-  min-width: 80px; /* 최소 너비 설정 */
-  background-color: rgb(253, 241, 241);
-  padding: 10px 0;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-}
-
-#sidenav a {
-  text-decoration: none;
-  display: block;
-  padding: 10px 0;
-  color: #333;
-  font-weight: 500;
-  transition: background-color 0.2s;
-}
-
-#sidenav a:hover {
-  background-color: rgba(255, 0, 0, 0.1);
-  color: #cc0000;
-}
-
-/* ======================================================================
  * 3. 메인 콘텐츠 및 검색 영역 (MAIN CONTENT & SEARCH)
  * ====================================================================== */
-main section:nth-of-type(2) {
-  flex-grow: 1; /* 남은 공간을 모두 사용 */
-  width: 90vw; /* (유연성을 위해 flex-grow 사용 권장) */
-  display: flex;
-  flex-direction: column;
-  text-align: center;
-  background-color: #e0e0e0; /* 연한 회색 배경 */
-  padding: 0;
-}
 
 /* 메인 - 검색 폼 (form으로 변경 가정) */
 #poke-search-form {
@@ -249,9 +163,58 @@ main section:nth-of-type(2) {
 }
 
 /* ======================================================================
- * 6. 카드 2: 종족값 (GRID 기반)
+ * 6. 카드 2: 진화 계열 (Evolution)
  * ====================================================================== */
 #poke-search-card-2 {
+  justify-content: flex-start; /* 상단부터 채우기 */
+}
+
+.evolution-container {
+  display: flex;
+  flex-wrap: wrap; /* 이미지가 많아지면 줄바꿈 */
+  justify-content: center; /* 가운데 정렬 */
+  align-items: center;
+  gap: 15px; /* 이미지 간격 */
+  flex-grow: 1;
+  padding: 10px 0;
+}
+
+.evolution-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  min-width: 80px; /* 최소 너비 */
+}
+
+.evolution-item img {
+  width: 96px; /* 이미지 크기 (기본 스프라이트 크기) */
+  height: 96px;
+  image-rendering: pixelated;
+  background-color: #e6e6e6; /* 배경색 */
+  border: 1px solid #aaa;
+  border-radius: 5px;
+  object-fit: contain;
+}
+
+.evolution-name {
+  margin-top: 5px;
+  font-size: 0.9em;
+  font-weight: 600;
+  color: #333;
+  word-break: keep-all; /* 이름 줄바꿈 방지 */
+}
+
+.evolution-form-tag {
+  font-size: 0.7em;
+  color: #cc0000;
+  font-weight: bold;
+}
+
+/* ======================================================================
+ * 7. 카드 3: 종족값 (GRID 기반)
+ * ====================================================================== */
+#poke-search-card-3 {
   /* flex-direction: column;은 card 공통에 있음 */
   justify-content: flex-start; /* 상단부터 채우기 */
 }
@@ -287,7 +250,7 @@ main section:nth-of-type(2) {
 }
 
 /* ======================================================================
- * 7. 카드 4: 타입 상성 (WEAKNESS)
+ * 8. 카드 4: 타입 상성 (WEAKNESS)
  * ====================================================================== */
 #poke-search-card-4 {
   /* 내부 콘텐츠가 왼쪽 정렬되도록 */
@@ -390,4 +353,86 @@ main section:nth-of-type(2) {
 }
 #fairy {
   background-color: rgb(238, 153, 172);
+}
+
+/* ======================================================================
+ * 9. 진화 계열 모달창
+ * ====================================================================== */
+.modal {
+  display: none; /* 기본적으로 숨김 */
+  position: fixed;
+  z-index: 100;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.7);
+}
+.modal-content {
+  background-color: #fefefe;
+  margin: 10% auto;
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%;
+  max-width: 900px;
+  border-radius: 10px;
+}
+.close-button {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.evolution-container-modal {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 15px;
+}
+/* 더보기 버튼  */
+.evolution-item.more-button {
+  /* 기존 evolution-item의 큰 크기 대신, 내용물에 맞게 크기를 줄입니다. */
+  width: auto; /* 너비를 내용물에 맞게 조정 */
+  height: auto; /* 높이도 내용물에 맞게 조정 */
+  padding: 0; /* 내부 패딩 제거 */
+  margin: 0; /* 마진도 제거 (레이아웃에 따라 필요하면 조정) */
+
+  /* 기존 evolution-item의 border 대신 버튼에만 테두리를 적용합니다. */
+  border: none;
+  background-color: transparent;
+
+  /* Flex 컨테이너 내에서 아이템 배치 및 정렬 */
+  display: flex;
+  align-items: center; /* 수직 중앙 정렬 */
+  justify-content: flex-start;
+}
+
+/* 버튼 자체 스타일 수정 (작게 만들고 눈에 띄게 강조) */
+.evolution-item.more-button button {
+  background-color: #6a5acd;
+  color: white;
+  border: none;
+  padding: 5px 10px; /* 패딩을 줄여 버튼 크기 최소화 */
+  font-size: 0.85em; /* 글자 크기 축소 */
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 5px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.2s, box-shadow 0.2s, transform 0.1s;
+  width: auto; /* 너비를 내용물에 맞게 */
+  white-space: nowrap; /* 텍스트가 줄바꿈되지 않도록 */
+}
+
+/* 3. 호버/활성화 효과 */
+.evolution-item.more-button button:hover {
+  background-color: #7b68ee;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+}
+
+.evolution-item.more-button button:active {
+  background-color: #5d48bd;
+  transform: translateY(1px);
 }

@@ -4,7 +4,7 @@ async function fetchHtmlAsText(url) {
 
 async function importPage(target) {
   document.querySelector("#" + target).innerHTML = await fetchHtmlAsText(
-    target + ".html"
+    "includes/" + target + ".html"
   );
 }
 importPage("header");

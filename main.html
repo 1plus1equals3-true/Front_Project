@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Api Test</title>
-    <link rel="stylesheet" href="main.css" />
+    <title>Poke Dex</title>
+    <link rel="stylesheet" href="/assets/css/layout.css" />
+    <link rel="stylesheet" href="/assets/css/main.css" />
   </head>
   <body>
     <header id="header"></header>
@@ -19,10 +20,10 @@
               id="name-input"
               list="search-list"
               placeholder="이름 입력"
-              value="피카츄"
+              value="이상해씨"
             />
             <datalist id="search-list"> </datalist>
-            <button onclick="getValues()">값 가져오기</button>
+            <button>검색</button>
           </form>
         </div>
 
@@ -43,6 +44,13 @@
             </div>
 
             <div id="poke-search-card-2">
+              <div class="card-title">진화 계열</div>
+              <div id="evolution-container" class="evolution-container"></div>
+            </div>
+          </div>
+
+          <div id="poke-search-box-right">
+            <div id="poke-search-card-3">
               <div class="card-title">종족값</div>
               <div class="stats-grid-container">
                 <div class="stat-label">HP</div>
@@ -60,10 +68,6 @@
                 <div id="stat-speed" class="base-stat-value">90</div>
               </div>
             </div>
-          </div>
-
-          <div id="poke-search-box-right">
-            <div id="poke-search-card-3"></div>
             <div id="poke-search-card-4">
               <div class="card-title">타입 상성</div>
               <div id="weak4" class="weak"></div>
@@ -75,9 +79,21 @@
           </div>
         </div>
       </section>
+
+      <div id="evolution-modal" class="modal">
+        <div class="modal-content">
+          <span class="close-button">&times;</span>
+          <div class="modal-title">전체 진화 계열</div>
+          <div
+            id="all-evolution-display"
+            class="evolution-container-modal"
+          ></div>
+        </div>
+      </div>
     </main>
 
     <footer id="footer"></footer>
-    <script src="main.js"></script>
+    <script src="/assets/js/layout.js"></script>
+    <script src="/assets/js/main.js"></script>
   </body>
 </html>
