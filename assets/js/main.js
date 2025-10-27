@@ -198,10 +198,12 @@ async function getAndRenderEvolution(
 
       let finalTag = "";
 
-      if (defaultName === currentPokemonName) {
-        // 1. 현재 포켓몬일 경우: "현재 포켓몬"을 우선 표시
-        finalTag = "현재 포켓몬";
-      } else if (stageTag === "미진화체") {
+      // 진화 트리에서 검색한 포켓몬 "현재 포켓몬"으로 표시 코드
+      // if (defaultName === currentPokemonName) {
+      //   // 1. 현재 포켓몬일 경우: "현재 포켓몬"을 우선 표시
+      //   finalTag = "현재 포켓몬";
+      // } else
+      if (stageTag === "미진화체") {
         // 2. 진화 체인의 가장 첫 포켓몬일 경우: "미진화체" 표시
         finalTag = "미진화체";
       } else {
