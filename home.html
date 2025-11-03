@@ -13,10 +13,46 @@
     <main>
       <section id="sidenav"></section>
       <section>
-        <img src="/assets/img/Poke Ball.webp" alt="X" width="10%" />
-        <img src="/assets/img/Great Ball.webp" alt="X" width="10%" />
-        <img src="/assets/img/Ultra Ball.webp" alt="X" width="10%" />
-        <img src="/assets/img/Master Ball.webp" alt="X" width="10%" />
+        <div id="home-search-section" class="home-card">
+          <h1>포켓몬 도감 (Poke Dex)</h1>
+          <form id="main-search-form">
+            <input
+              type="text"
+              placeholder="찾으시는 포켓몬의 이름을 입력하세요 (예: 피카츄)"
+              list="search-list"
+              autofocus
+            />
+            <button type="submit">검색</button>
+            <datalist id="search-list"> </datalist>
+          </form>
+        </div>
+
+        <div id="pokemon-of-the-day-card" class="home-card">
+          <h2>✨ 오늘의 포켓몬</h2>
+          <div class="potd-content">
+            <img
+              id="potd-sprite"
+              src="/assets/img/default-sprite.webp"
+              alt="오늘의 포켓몬 이미지"
+            />
+            <div class="potd-info">
+              <p class="potd-id">No. ###</p>
+              <h3 class="potd-name">포켓몬 이름</h3>
+              <p class="potd-type">타입: ?? / ??</p>
+            </div>
+          </div>
+          <a href="#" id="potd-link" class="view-details-btn"
+            >자세히 보기 &raquo;</a
+          >
+        </div>
+
+        <div id="recent-searches-section" class="home-card">
+          <h2>🔍 최근 검색</h2>
+          <ul id="recent-search-list"></ul>
+          <p id="no-recent-searches" style="display: none">
+            최근 검색 기록이 없습니다.
+          </p>
+        </div>
       </section>
     </main>
 

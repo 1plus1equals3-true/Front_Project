@@ -62,6 +62,42 @@ function getEnglishName(koreanName) {
   }
 }
 
+// 로컬 스토리지 키 정의
+const RECENT_SEARCHES_KEY = "recent_pokemon_searches";
+const MAX_RECENT_SEARCHES = 10; // 저장할 최대 개수
+
+/**
+ * 최근 검색 기록을 로컬 스토리지에 저장하고 관리합니다.
+ * @param {string} pokemonName - 성공적으로 검색된 포켓몬 이름 (한글)
+ */
+function saveRecentSearch(pokemonName) {
+  let searches = localStorage.getItem(RECENT_SEARCHES_KEY);
+  searches = searches ? JSON.parse(searches) : [];
+
+  // 1. 중복 제거: 기존에 같은 이름이 있다면 배열에서 제거합니다.
+  searches = searches.filter((name) => name !== pokemonName);
+
+  // 2. 맨 앞에 새 검색어를 추가합니다.
+  searches.unshift(pokemonName);
+
+  // 3. 최대 개수(MAX_RECENT_SEARCHES)를 초과하면 오래된 항목을 제거합니다.
+  if (searches.length > MAX_RECENT_SEARCHES) {
+    searches = searches.slice(0, MAX_RECENT_SEARCHES);
+  }
+
+  // 4. 로컬 스토리지에 저장합니다.
+  localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
+}
+
+/**
+ * 로컬 스토리지에서 최근 검색 기록을 불러옵니다.
+ * @returns {Array<string>} 최근 검색된 포켓몬 이름 배열
+ */
+function getRecentSearches() {
+  const searches = localStorage.getItem(RECENT_SEARCHES_KEY);
+  return searches ? JSON.parse(searches) : [];
+}
+
 /**
  * 진화 체인 데이터를 재귀적으로 파싱하여 모든 진화체의 유일한 이름을 Set에 담습니다.
  * @param {object} chainData - 현재 진화 단계의 chain 객체
@@ -413,6 +449,9 @@ function getValues() {
     })
     // 2단계: DOM 업데이트 및 타입 상성 Promise 배열 생성
     .then((pokeData) => {
+      // 최근 검색 기록 저장
+      saveRecentSearch(name);
+
       // ----------------------------------------------------
       // ⭐ 기존의 모든 DOM 업데이트 로직 ⭐
       // ----------------------------------------------------
@@ -629,6 +668,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const searchForm = document.getElementById("poke-search-form");
   const nameInput = document.getElementById("name-input");
 
+  // 홈에서 받은 name 파라미터
+  const urlParams = new URLSearchParams(window.location.search);
+  const initialSearchName = urlParams.get("name");
+
   // 2. 데이터 로드 후 나머지 기능 실행
   loadPokemonData().then(() => {
     populateDatalist();
@@ -644,7 +687,16 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    // 초기 검색 실행 (페이지 로드 시 "피카츄" 등으로 초기 검색)
-    getValues();
+    // 초기 검색 실행
+    if (initialSearchName) {
+      const decodedName = decodeURIComponent(initialSearchName); // 검색창에 검색어를 채우고
+
+      nameInput.value = decodedName; // 바로 검색 함수를 실행합니다.
+
+      getValues();
+    } else {
+      // 쿼리 파라미터가 없을 경우, 기존처럼 nameInput의 value(예: 이상해씨)로 초기 검색
+      getValues();
+    }
   });
 });

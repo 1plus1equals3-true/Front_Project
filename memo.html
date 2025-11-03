@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Poke Dex</title>
+    <link rel="stylesheet" href="/assets/css/layout.css" />
+    <link rel="stylesheet" href="/assets/css/memo.css" />
+  </head>
+  <body>
+    <header id="header"></header>
+
+    <main>
+      <section id="sidenav"></section>
+      <section>
+        <div id="memo-container">
+          <h2>메모장</h2>
+
+          <ul id="memo-list"></ul>
+
+          <form id="memo-form">
+            <textarea
+              id="memo-input"
+              placeholder="여기에 메모를 작성하세요..."
+              rows="4"
+              required
+            ></textarea>
+            <button type="submit">메모 추가</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer id="footer"></footer>
+    <script src="/assets/js/layout.js"></script>
+    <script src="/assets/js/memo.js"></script>
+  </body>
+</html>
