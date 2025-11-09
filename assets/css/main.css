@@ -184,6 +184,7 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
+  cursor: pointer;
   min-width: 80px; /* 최소 너비 - 원래 min 80px */
 }
 
@@ -250,6 +251,69 @@
 }
 
 /* ======================================================================
+ * 7.1 카드 3: 추가 정보 (특성, 포획률)
+ * ====================================================================== */
+.stat-additional-info-container {
+  margin-top: 15px;
+  padding-top: 15px;
+  border-top: 2px solid #aaa; /* 종족값 그리드와 구분선 */
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.info-group {
+  display: flex;
+  align-items: flex-start; /* 텍스트가 위에서 시작하도록 */
+  gap: 10px;
+}
+
+.info-label {
+  font-weight: bold;
+  color: #3f51b5; /* 도감 UI 강조색 */
+  min-width: 60px; /* 라벨 너비 고정 */
+  flex-shrink: 0;
+  padding-top: 3px; /* 내용물과 수직 정렬 */
+}
+
+.info-content {
+  flex-grow: 1;
+  font-size: 1em;
+}
+
+.ability-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px; /* 특성 태그 간 간격 */
+}
+
+.ability-tag {
+  /* 특성명 태그 스타일 */
+  background-color: #00bcd4; /* 청록색 기본 */
+  color: white;
+  padding: 3px 8px;
+  border-radius: 12px; /* 둥근 모양 */
+  font-size: 0.9em;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.1s;
+  user-select: none;
+  white-space: nowrap; /* 태그 내용 줄바꿈 방지 */
+}
+
+.ability-tag:hover {
+  background-color: #0097a7;
+  transform: translateY(-1px);
+}
+
+.hidden-ability {
+  /* 숨겨진 특성 강조 스타일 */
+  background-color: #ff5722; /* 주황색 계열 */
+  box-shadow: 0 2px 4px rgba(255, 87, 34, 0.5);
+}
+
+/* ======================================================================
  * 8. 카드 4: 타입 상성 (WEAKNESS)
  * ====================================================================== */
 #poke-search-card-4 {
@@ -276,83 +340,6 @@
   white-space: nowrap;
   color: #444;
   padding-left: 5px;
-}
-
-/* 모든 타입 태그에 적용되는 공통 스타일 */
-.type-tag {
-  /* 작은 캡슐 모양으로 조정 */
-  width: auto; /* 내용 길이에 맞춰 너비 자동 조절 */
-  min-width: 40px;
-  height: 24px;
-  font-size: 14px;
-  color: white;
-  margin-right: 6px;
-  margin-top: 2px;
-  margin-bottom: 2px;
-  padding: 0 8px; /* 좌우 패딩으로 텍스트 주변 공간 확보 */
-
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 12px; /* 캡슐 모양 */
-  font-weight: 500;
-  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
-}
-
-/* 각 타입별 배경색 (PokeAPI 타입명으로 ID 지정) */
-#normal {
-  background-color: rgb(168, 168, 120);
-}
-#fire {
-  background-color: rgb(240, 128, 48);
-}
-#water {
-  background-color: rgb(104, 144, 240);
-}
-#grass {
-  background-color: rgb(120, 200, 80);
-}
-#electric {
-  background-color: rgb(248, 208, 48);
-}
-#ice {
-  background-color: rgb(152, 216, 216);
-}
-#fighting {
-  background-color: rgb(192, 48, 40);
-}
-#poison {
-  background-color: rgb(160, 64, 160);
-}
-#ground {
-  background-color: rgb(224, 192, 104);
-}
-#flying {
-  background-color: rgb(168, 144, 240);
-}
-#psychic {
-  background-color: rgb(248, 88, 136);
-}
-#bug {
-  background-color: rgb(168, 184, 32);
-}
-#rock {
-  background-color: rgb(184, 160, 56);
-}
-#ghost {
-  background-color: rgb(112, 88, 152);
-}
-#dragon {
-  background-color: rgb(112, 56, 248);
-}
-#steel {
-  background-color: rgb(184, 184, 208);
-}
-#dark {
-  background-color: rgb(112, 88, 72);
-}
-#fairy {
-  background-color: rgb(238, 153, 172);
 }
 
 /* ======================================================================
@@ -435,6 +422,63 @@
 .evolution-item.more-button button:active {
   background-color: #5d48bd;
   transform: translateY(1px);
+}
+
+/* ======================================================================
+ * 9.1 특성 정보 모달 (추가)
+ * ====================================================================== */
+/* 기존 .modal과 .modal-content를 사용하고, 내용물만 추가합니다. */
+.modal-title {
+  font-size: 1.5em;
+  font-weight: bold;
+  color: #cc0000;
+  margin-bottom: 10px;
+}
+
+#ability-modal p {
+  font-size: 1em;
+  line-height: 1.5;
+  white-space: pre-wrap; /* 줄바꿈 포함된 텍스트를 유지 */
+}
+
+/* ======================================================================
+ * ★ 로딩 인디케이터 스타일 (진화 계열 카드용)
+ * ====================================================================== */
+.loading-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 30px 0; /* 카드 내부에 충분한 공간 확보 */
+  color: #666;
+  font-size: 1.1em;
+  font-weight: 500;
+}
+
+/* 톱니바퀴 (스피너) 스타일 */
+.spinner {
+  border: 4px solid rgba(0, 0, 0, 0.1);
+  border-top: 4px solid #cc0000; /* 포켓볼 레드 색상 */
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite; /* 1초 동안 무한 회전 */
+  margin-bottom: 10px;
+}
+
+/* 톱니바퀴 회전 애니메이션 */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* 데이터가 완전히 로드되기 전, 기존 컨테이너를 가리는 역할 */
+#evolution-container {
+  min-height: 100px; /* 로딩 스피너가 들어갈 수 있는 최소 높이 */
 }
 
 /* ======================================================================

@@ -68,32 +68,37 @@ const MAX_RECENT_SEARCHES = 10; // 저장할 최대 개수
 
 /**
  * 최근 검색 기록을 로컬 스토리지에 저장하고 관리합니다.
- * @param {string} pokemonName - 성공적으로 검색된 포켓몬 이름 (한글)
+ * @param {string} koreanName - 성공적으로 검색된 포켓몬 이름 (한글, 표시용)
+ * @param {string} englishName - 실제 API 검색에 사용된 이름 (영문, 특수폼 포함)
  */
-function saveRecentSearch(pokemonName) {
+function saveRecentSearch(koreanName, englishName) {
+  // ⭐ 인수가 2개로 바뀜
   let searches = localStorage.getItem(RECENT_SEARCHES_KEY);
   searches = searches ? JSON.parse(searches) : [];
 
-  // 1. 중복 제거: 기존에 같은 이름이 있다면 배열에서 제거합니다.
-  searches = searches.filter((name) => name !== pokemonName);
+  const newEntry = { koreanName: koreanName, englishName: englishName }; // ⭐ 객체로 저장
 
-  // 2. 맨 앞에 새 검색어를 추가합니다.
-  searches.unshift(pokemonName);
+  // 1. 중복 제거: 기존에 같은 koreanName이 있다면 제거
+  searches = searches.filter((entry) => entry.koreanName !== koreanName);
 
-  // 3. 최대 개수(MAX_RECENT_SEARCHES)를 초과하면 오래된 항목을 제거합니다.
+  // 2. 맨 앞에 새 검색어를 추가
+  searches.unshift(newEntry);
+
+  // 3. 최대 개수 유지
   if (searches.length > MAX_RECENT_SEARCHES) {
     searches = searches.slice(0, MAX_RECENT_SEARCHES);
   }
 
-  // 4. 로컬 스토리지에 저장합니다.
+  // 4. 로컬 스토리지에 저장
   localStorage.setItem(RECENT_SEARCHES_KEY, JSON.stringify(searches));
 }
 
 /**
  * 로컬 스토리지에서 최근 검색 기록을 불러옵니다.
- * @returns {Array<string>} 최근 검색된 포켓몬 이름 배열
+ * @returns {Array<object>} 최근 검색된 포켓몬 이름 객체 배열 ({koreanName, englishName} 형식)
  */
 function getRecentSearches() {
+  // ⭐ 반환 타입이 객체 배열로 변경됨
   const searches = localStorage.getItem(RECENT_SEARCHES_KEY);
   return searches ? JSON.parse(searches) : [];
 }
@@ -123,7 +128,24 @@ function parseEvolutionChain(chainData, evolutionNamesSet) {
  */
 function createEvolutionItem(item) {
   const itemDiv = document.createElement("div");
-  itemDiv.classList.add("evolution-item"); // 기존 스타일 유지
+  itemDiv.classList.add("evolution-item");
+
+  // data-english-name (API 검색용 이름)과 data-korean-name (표시용 이름) 저장
+  itemDiv.setAttribute("data-english-name", item.englishName);
+  itemDiv.setAttribute("data-korean-name", item.name);
+
+  itemDiv.addEventListener("click", () => {
+    const englishName = itemDiv.getAttribute("data-english-name"); // API 검색용 (예: charizard-mega-x)
+    const koreanName = itemDiv.getAttribute("data-korean-name"); // 표시용 (예: 리자몽 (메가))
+
+    if (englishName) {
+      // 검색창 표시용 한글 이름
+      document.getElementById("name-input").value = koreanName;
+
+      // 검색용 이름 인수로 전달
+      getValues(englishName);
+    }
+  });
 
   const img = document.createElement("img");
   img.src = item.sprite;
@@ -252,6 +274,7 @@ async function getAndRenderEvolution(
         sprite: defaultPokemonData.sprites.front_default,
         formTag: finalTag,
         sortOrder: 1,
+        englishName: defaultName,
       });
 
       // 2. 특수 폼 (Forms) 처리
@@ -288,11 +311,20 @@ async function getAndRenderEvolution(
               .replace(`${defaultName}-`, "")
               .replace(/-/g, " ");
 
+            // (1) 한국어 이름 (표시용)
+            const displayKoreanName = `${defaultKoreanName} (${formTag
+              .split("(")[0]
+              .trim()})`;
+
+            // (2) 영문 이름 (검색용, 특수폼까지 포함)
+            const searchEnglishName = variantName;
+
             allEvolutionSprites.push({
-              name: defaultKoreanName, // 포켓몬 이름 자체는 같으므로 한글 이름 사용
+              name: displayKoreanName, // 표시되는 이름 (예: 리자몽 (메가))
               sprite: formSprite,
-              formTag: `${formTag} (${cleanedFormName})`,
+              formTag: cleanedFormName,
               sortOrder: sortOrder,
+              englishName: searchEnglishName, // 영문 이름
             });
           }
         }
@@ -302,15 +334,28 @@ async function getAndRenderEvolution(
     }
   }
 
-  // 최종 렌더링을 위해 이름 순(진화 순서) 후 폼 태그 순으로 정렬 (정렬 로직을 추가하는 것이 좋지만, 여기서는 간단히 이름순으로)
+  // 최종 렌더링
   allEvolutionSprites.sort((a, b) => {
-    // 1. 기본 이름 순서 (진화 순서)
-    const nameIndexA = uniqueNames.indexOf(pokemonNames[a.name] || a.name);
-    const nameIndexB = uniqueNames.indexOf(pokemonNames[b.name] || b.name);
-    if (nameIndexA !== nameIndexB) return nameIndexA - nameIndexB;
+    // 1. 기본 포켓몬 이름 순서 (진화 순서)
+    const speciesNameA = a.englishName.split("-")[0];
+    const speciesNameB = b.englishName.split("-")[0];
 
-    // 2. 폼 순서 (기본폼 -> 리전폼/특수폼 -> 메가 -> 거다이맥스)
-    return a.sortOrder - b.sortOrder;
+    const nameIndexA = uniqueNames.indexOf(speciesNameA);
+    const nameIndexB = uniqueNames.indexOf(speciesNameB);
+
+    // 포켓몬의 기본 이름이 같지 않다면, 진화 순서대로 정렬합니다.
+    if (nameIndexA !== nameIndexB) {
+      return nameIndexA - nameIndexB;
+    }
+
+    // 2. 기본 포켓몬 이름이 같다면 (폼 비교)
+    // - 기본 폼(sortOrder: 1)이 항상 다른 폼(sortOrder: 2 이상)보다 앞에 오도록 보장합니다.
+    if (a.sortOrder !== b.sortOrder) {
+      return a.sortOrder - b.sortOrder;
+    }
+
+    // 3. sortOrder도 같다면, 폼 태그 이름으로 정렬합니다. (선택적)
+    return a.formTag.localeCompare(b.formTag);
   });
 
   // 중복 스프라이트를 제거합니다 (같은 이름, 같은 폼 태그)
@@ -354,6 +399,8 @@ async function getAndRenderEvolution(
     moreButtonDiv.appendChild(button);
     container.appendChild(moreButtonDiv);
   }
+  // 로딩 인디케이터 숨김 (함수가 끝날 때)
+  document.getElementById("evolution-loading").style.display = "none";
 } // <-- getAndRenderEvolution 함수 종료
 
 /**
@@ -411,10 +458,177 @@ function parseEvolutionChainDetails(
   }
 }
 
+/**
+ * 포켓몬 종족(Species) 정보를 호출합니다. (포획률 등)
+ * @param {number} pokemonId - 포켓몬 도감 번호
+ * @returns {Promise<object>} Species API 응답 객체
+ */
+async function fetchSpeciesData(pokemonId) {
+  const speciesUrl = `https://pokeapi.co/api/v2/pokemon-species/${pokemonId}/`;
+  const response = await fetch(speciesUrl);
+  if (!response.ok) throw new Error("Species API 호출 실패");
+  return response.json();
+}
+
+/**
+ * 특성 정보를 호출하고 모달을 띄웁니다.
+ * @param {string} abilityNameEng - 특성 영어 이름
+ */
+async function showAbilityModal(abilityNameEng) {
+  // 1. 모달 DOM 요소 가정 (HTML에 추가 필요)
+  const modal = document.getElementById("ability-modal");
+  const titleDiv = document.getElementById("ability-modal-title");
+  const effectDiv = document.getElementById("ability-modal-effect");
+
+  // 로딩 표시
+  titleDiv.textContent = "로딩 중...";
+  effectDiv.textContent = "";
+  modal.style.display = "block";
+
+  try {
+    // 2. 특성 API 호출
+    const abilityUrl = `https://pokeapi.co/api/v2/ability/${abilityNameEng}`;
+    const response = await fetch(abilityUrl);
+    if (!response.ok) throw new Error("Ability API 호출 실패");
+    const data = await response.json();
+
+    // 3. 한국어 이름 및 효과 추출
+    const nameKo =
+      data.names.find((n) => n.language.name === "ko")?.name || abilityNameEng;
+
+    // 🚨 여기서 한국어 효과(effect_entries) 또는 긴 설명(flavor_text_entries)을 찾습니다.
+    let effectText = "한국어 설명 없음.";
+
+    // 1순위: 효과 설명 (가장 상세함)
+    const effectEntry = data.effect_entries.find(
+      (e) => e.language.name === "ko"
+    );
+    if (effectEntry && effectEntry.effect) {
+      effectText = effectEntry.effect;
+    } else {
+      // 2순위: 게임 내 설명 (덜 상세함)
+      const flavorTextEntry = data.flavor_text_entries.find(
+        (e) => e.language.name === "ko"
+      );
+      if (flavorTextEntry && flavorTextEntry.flavor_text) {
+        effectText = flavorTextEntry.flavor_text;
+      }
+    }
+
+    // 4. 모달 업데이트
+    titleDiv.textContent = nameKo;
+    effectDiv.textContent = effectText;
+  } catch (error) {
+    console.error("특성 정보 로딩 오류:", error);
+    titleDiv.textContent = "오류 발생";
+    effectDiv.textContent = "특성 정보를 불러올 수 없습니다.";
+  }
+}
+
+/**
+ * 특성 정보를 렌더링하고 클릭 이벤트를 설정합니다.
+ * @param {Array<object>} abilities - 포켓몬의 abilities 배열
+ * @param {string} targetDivId - 특성을 표시할 DOM 요소 ID
+ */
+async function renderAbilities(abilities, targetDivId) {
+  const targetDiv = document.getElementById(targetDivId);
+  targetDiv.innerHTML = ""; // 기존 내용 초기화
+
+  // 특성 정보를 한 번에 가져오는 Promise 배열 생성
+  const abilityPromises = abilities.map(async (item) => {
+    const abilityNameEng = item.ability.name;
+    const isHidden = item.is_hidden;
+
+    try {
+      const abilityUrl = `https://pokeapi.co/api/v2/ability/${abilityNameEng}`;
+      const response = await fetch(abilityUrl);
+      const data = await response.json();
+
+      // 한국어 이름 추출
+      const nameKo =
+        data.names.find((n) => n.language.name === "ko")?.name ||
+        abilityNameEng;
+
+      return { nameEng: abilityNameEng, nameKo: nameKo, isHidden: isHidden };
+    } catch (error) {
+      console.error(`특성 ${abilityNameEng} 정보 호출 실패:`, error);
+      return {
+        nameEng: abilityNameEng,
+        nameKo: abilityNameEng,
+        isHidden: isHidden,
+      };
+    }
+  });
+
+  // 모든 특성 정보가 로드된 후 렌더링
+  const loadedAbilities = await Promise.all(abilityPromises);
+
+  loadedAbilities.forEach((item) => {
+    const abilityTag = document.createElement("span");
+    abilityTag.classList.add("ability-tag");
+
+    let nameToDisplay = item.nameKo;
+
+    if (item.isHidden) {
+      abilityTag.textContent = `${nameToDisplay} (숨겨진 특성)`;
+      abilityTag.classList.add("hidden-ability");
+    } else {
+      abilityTag.textContent = nameToDisplay;
+    }
+
+    // 클릭 이벤트 추가: 모달 호출 (영문 이름 사용)
+    abilityTag.addEventListener("click", () => {
+      showAbilityModal(item.nameEng);
+    });
+
+    targetDiv.appendChild(abilityTag);
+  });
+}
+
+/**
+ * 포획률 정보를 렌더링합니다.
+ * @param {number} rate - 포획률 (capture_rate) 값
+ * @param {string} targetId - 포획률을 표시할 DOM 요소 ID
+ */
+function renderCatchRate(rate, targetId) {
+  const targetElement = document.getElementById(targetId);
+  if (targetElement) {
+    targetElement.textContent = rate;
+  }
+}
+
 // 값 가져오기
-function getValues() {
+function getValues(apiName = null) {
   const name = document.getElementById("name-input").value;
-  const englishName = getEnglishName(name);
+
+  // 1. apiName(진화 계열 클릭 시 전달된 영문 이름)을 최우선으로 사용합니다.
+  let englishName = apiName;
+
+  if (englishName) {
+    // apiName이 null이 아닌 경우
+    // case 1: 진화 계열 클릭 (apiName = 'charizard-mega-x' 등 영문/ID)
+    // case 2: 홈에서 이동 (apiName = '피카츄' 등 한글)
+
+    // 만약 전달된 apiName이 한글인 경우 (영문 변환 맵에 존재하면) 영문으로 변환합니다.
+    const convertedEnglishName = getEnglishName(englishName);
+
+    if (convertedEnglishName) {
+      // '피카츄'가 들어왔고 맵에서 'pikachu'를 찾았다면
+      englishName = convertedEnglishName;
+    } else {
+      // 'charizard-mega-x' (특수폼)나 '25' (ID) 같은 영문/ID이거나,
+      // 맵에 없는 한글 이름인 경우, 그대로 사용 (API 호출을 시도)
+    }
+  } else {
+    // 2. apiName이 없으면 (일반 검색 버튼 클릭)
+    // 검색창의 한글 이름(name)으로 맵에서 영문 이름을 찾습니다.
+    englishName = getEnglishName(name);
+
+    if (englishName === null) {
+      // 3. 맵에도 없으면 (특수폼 이름 등), 검색창의 값을 그대로 API 이름으로 시도합니다.
+      englishName = name;
+    }
+  }
 
   // 이름 먼저 표시
   document.getElementById("pokename").textContent = `${name}`;
@@ -434,6 +648,11 @@ function getValues() {
     document.getElementById("stat-special-attack").textContent = "-";
     document.getElementById("stat-special-defense").textContent = "-";
     document.getElementById("stat-speed").textContent = "-";
+    const abilityContainer = document.getElementById("ability-container");
+    if (abilityContainer) abilityContainer.innerHTML = "-";
+
+    const catchRateDisplay = document.getElementById("catch-rate-display");
+    if (catchRateDisplay) catchRateDisplay.textContent = "-";
     return;
   }
 
@@ -450,12 +669,19 @@ function getValues() {
     // 2단계: DOM 업데이트 및 타입 상성 Promise 배열 생성
     .then((pokeData) => {
       // 최근 검색 기록 저장
-      saveRecentSearch(name);
+      saveRecentSearch(name, englishName);
 
       // ----------------------------------------------------
       // ⭐ 기존의 모든 DOM 업데이트 로직 ⭐
       // ----------------------------------------------------
       console.log(`포켓몬 : ${pokeData.name}`);
+
+      const finalKoreanName =
+        Object.keys(pokemonNames).find(
+          (key) => pokemonNames[key] === pokeData.name
+        ) || pokeData.name; // 못 찾으면 영문 이름 그대로 사용
+
+      document.getElementById("pokename").textContent = `${name}`;
 
       // 카드 1 업데이트
       document.getElementById(
@@ -468,18 +694,32 @@ function getValues() {
 
       // 카드 3 업데이트
       // 스탯 배열 순서: 0:HP, 1:Attack, 2:Defense, 3:Sp.Attack, 4:Sp.Defense, 5:Speed
-      document.getElementById("stat-hp").textContent =
-        pokeData.stats[0].base_stat;
-      document.getElementById("stat-attack").textContent =
-        pokeData.stats[1].base_stat;
-      document.getElementById("stat-defense").textContent =
-        pokeData.stats[2].base_stat;
-      document.getElementById("stat-special-attack").textContent =
-        pokeData.stats[3].base_stat;
-      document.getElementById("stat-special-defense").textContent =
-        pokeData.stats[4].base_stat;
-      document.getElementById("stat-speed").textContent =
-        pokeData.stats[5].base_stat;
+      const statMapping = [
+        "stat-hp",
+        "stat-attack",
+        "stat-defense",
+        "stat-special-attack",
+        "stat-special-defense",
+        "stat-speed",
+      ];
+
+      pokeData.stats.forEach((statItem, index) => {
+        const statId = statMapping[index];
+        const statElement = document.getElementById(statId);
+
+        // 해당 DOM 요소와 스탯 데이터가 모두 유효한지 확인
+        if (statElement && statItem && statItem.base_stat !== undefined) {
+          statElement.textContent = statItem.base_stat;
+        } else {
+          // 데이터가 없으면 '-'로 표시하고 콘솔에 경고
+          if (statElement) statElement.textContent = "-";
+          console.warn(
+            `[${pokeData.name}] ${statId} 스탯 정보가 누락되었습니다.`
+          );
+        }
+      });
+
+      renderAbilities(pokeData.abilities, "ability-container");
 
       // ----------------------------------------------------
       // ⭐ 진화 정보 및 타입 상성 준비 ⭐
@@ -502,12 +742,20 @@ function getValues() {
       // Promise.all을 반환하여 다음 .then()에서 모든 타입 상성 데이터를 받습니다.
       //return Promise.all(typePromises);
       return Promise.all([
-        speciesPromise,
-        Promise.all(typePromises),
-        englishName,
+        speciesPromise, // [0]
+        Promise.all(typePromises), // [1]
+        englishName, // [2]
+        pokeData.id, // [3] 포획률을 위해 ID도 함께 전달
       ]);
     })
-    .then(([speciesData, allTypeData, currentPokemonName]) => {
+    .then(([speciesData, allTypeData, currentPokemonName, pokemonId]) => {
+      // 로딩 인디케이터 표시
+      document.getElementById("evolution-loading").style.display = "flex";
+
+      // 포획률 렌더링
+      const catchRate = speciesData.capture_rate;
+      renderCatchRate(catchRate, "catch-rate-display");
+
       // Evolution Chain 데이터 가져오기 및 렌더링
       const evolutionChainUrl = speciesData.evolution_chain.url;
       return fetch(evolutionChainUrl)
@@ -623,6 +871,11 @@ function getValues() {
             // type-tag 클래스 추가
             typeDiv.classList.add("type-tag");
 
+            typeDiv.addEventListener("click", () => {
+              // type.html로 이동하며 쿼리 파라미터로 타입 이름 전달
+              window.location.href = `/type.html?type=${typeName}`;
+            });
+
             // 타입 이름을 텍스트로 표시합니다.
             const koreanName =
               typeNamesKorean[typeName.toLowerCase()] || typeName;
@@ -635,8 +888,11 @@ function getValues() {
       });
     })
     .catch((error) => {
-      console.error("오류 발생:", error.message);
-      document.getElementById("pokename").textContent = `${name} (오류 발생)`;
+      console.error("오류 발생:", error.message); // ⭐⭐ 안전한 접근 코드로 수정 ⭐⭐
+      const pokenameElement = document.getElementById("pokename");
+      if (pokenameElement) {
+        pokenameElement.textContent = `${name} (정보 로딩 오류)`;
+      }
     });
 }
 
@@ -670,6 +926,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // 홈에서 받은 name 파라미터
   const urlParams = new URLSearchParams(window.location.search);
+  const initialApiName = urlParams.get("apiName");
+  const initialDisplayName = urlParams.get("displayName");
   const initialSearchName = urlParams.get("name");
 
   // 2. 데이터 로드 후 나머지 기능 실행
@@ -688,15 +946,31 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // 초기 검색 실행
-    if (initialSearchName) {
-      const decodedName = decodeURIComponent(initialSearchName); // 검색창에 검색어를 채우고
+    if (initialApiName && initialDisplayName) {
+      // 4A. 쿼리 파라미터(home에서 이동)가 있다면: 해당 포켓몬으로 검색
+      const decodedApiName = decodeURIComponent(initialApiName);
+      const decodedDisplayName = decodeURIComponent(initialDisplayName);
 
-      nameInput.value = decodedName; // 바로 검색 함수를 실행합니다.
-
-      getValues();
+      nameInput.value = decodedDisplayName;
+      getValues(decodedDisplayName);
     } else {
-      // 쿼리 파라미터가 없을 경우, 기존처럼 nameInput의 value(예: 이상해씨)로 초기 검색
-      getValues();
+      // 4B. 메인 페이지로 직접 접근한 경우
+      const recentSearches = getRecentSearches(); // getRecentSearches는 이미 객체 배열 반환하도록 수정됨
+
+      if (recentSearches.length > 0) {
+        // 4B-1. 최근 검색 기록이 있다면: 가장 최근 기록 사용
+        const latestSearch = recentSearches[0];
+
+        nameInput.value = latestSearch.koreanName;
+        getValues(latestSearch.englishName);
+      } else {
+        // 4B-2. 최근 검색 기록이 없다면: 기본 포켓몬(이상해씨)으로 초기 검색
+        const defaultNameKo = "이상해씨";
+        const defaultNameEn = getEnglishName(defaultNameKo); // 'bulbasaur'
+
+        nameInput.value = defaultNameKo;
+        getValues(defaultNameEn);
+      }
     }
   });
 });

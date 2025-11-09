@@ -6,6 +6,7 @@
     <title>Poke Dex</title>
     <link rel="stylesheet" href="/assets/css/layout.css" />
     <link rel="stylesheet" href="/assets/css/main.css" />
+    <link rel="stylesheet" href="/assets/css/type-colors.css" />
   </head>
   <body>
     <header id="header"></header>
@@ -37,8 +38,8 @@
                   <img id="sprite-shiny" src="" alt="이로치 모습" />
                 </div>
                 <div class="name-id-container">
-                  <div id="pokename" class="pokemon-name">피카츄</div>
-                  <div id="pokedex_id" class="pokemon-id">도감번호 25</div>
+                  <div id="pokename" class="pokemon-name">포켓몬</div>
+                  <div id="pokedex_id" class="pokemon-id">도감번호 0</div>
                 </div>
               </div>
             </div>
@@ -46,6 +47,15 @@
             <div id="poke-search-card-2">
               <div class="card-title">진화 계열</div>
               <div id="evolution-container" class="evolution-container"></div>
+
+              <div
+                id="evolution-loading"
+                class="loading-indicator"
+                style="display: none"
+              >
+                <div class="spinner"></div>
+                <p>진화 정보 로딩 중...</p>
+              </div>
             </div>
           </div>
 
@@ -60,17 +70,39 @@
                 <div class="stat-label">특수방어</div>
                 <div class="stat-label">스피드</div>
 
-                <div id="stat-hp" class="base-stat-value">35</div>
-                <div id="stat-attack" class="base-stat-value">55</div>
-                <div id="stat-defense" class="base-stat-value">40</div>
-                <div id="stat-special-attack" class="base-stat-value">50</div>
-                <div id="stat-special-defense" class="base-stat-value">50</div>
-                <div id="stat-speed" class="base-stat-value">90</div>
+                <div id="stat-hp" class="base-stat-value">0</div>
+                <div id="stat-attack" class="base-stat-value">0</div>
+                <div id="stat-defense" class="base-stat-value">0</div>
+                <div id="stat-special-attack" class="base-stat-value">0</div>
+                <div id="stat-special-defense" class="base-stat-value">0</div>
+                <div id="stat-speed" class="base-stat-value">0</div>
               </div>
-              <!-- <div class="능력치 추가정보">
-                <div>특성 (일반특성과 숨겨진특성 모두 포함)</div>
-                <div>포획률</div>
-              </div> -->
+
+              <div class="stat-additional-info-container">
+                <div class="info-group">
+                  <div class="info-label">특성</div>
+                  <div
+                    id="ability-container"
+                    class="info-content ability-list"
+                  ></div>
+                </div>
+                <div class="info-group">
+                  <div class="info-label">포획률</div>
+                  <div id="catch-rate-display" class="info-content"></div>
+                </div>
+              </div>
+            </div>
+
+            <div id="ability-modal" class="modal">
+              <div class="modal-content">
+                <span
+                  class="close-button"
+                  onclick="document.getElementById('ability-modal').style.display='none'"
+                  >&times;</span
+                >
+                <div class="modal-title" id="ability-modal-title"></div>
+                <p id="ability-modal-effect"></p>
+              </div>
             </div>
             <div id="poke-search-card-4">
               <div class="card-title">타입 상성</div>

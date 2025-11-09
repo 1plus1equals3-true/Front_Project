@@ -1,0 +1,76 @@
+/* 공통 클래스 정의 */
+.type-tag {
+  width: auto;
+  min-width: 40px;
+  height: 28px;
+  font-size: 14px;
+  margin: 3px;
+  color: white;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 14px;
+  font-weight: 600;
+  text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.3);
+  box-shadow: 1px 1px 3px rgba(0, 0, 0, 0.3);
+  cursor: pointer;
+  transition: transform 0.1s;
+  user-select: none;
+}
+
+/* 타입별 색상 정의 */
+#normal {
+  background-color: rgb(168, 168, 120);
+}
+#fire {
+  background-color: rgb(240, 128, 48);
+}
+#water {
+  background-color: rgb(104, 144, 240);
+}
+#grass {
+  background-color: rgb(120, 200, 80);
+}
+#electric {
+  background-color: rgb(248, 208, 48);
+}
+#ice {
+  background-color: rgb(152, 216, 216);
+}
+#fighting {
+  background-color: rgb(192, 48, 40);
+}
+#poison {
+  background-color: rgb(160, 64, 160);
+}
+#ground {
+  background-color: rgb(224, 192, 104);
+}
+#flying {
+  background-color: rgb(168, 144, 240);
+}
+#psychic {
+  background-color: rgb(248, 88, 136);
+}
+#bug {
+  background-color: rgb(168, 184, 32);
+}
+#rock {
+  background-color: rgb(184, 160, 56);
+}
+#ghost {
+  background-color: rgb(112, 88, 152);
+}
+#dragon {
+  background-color: rgb(112, 56, 248);
+}
+#steel {
+  background-color: rgb(184, 184, 208);
+}
+#dark {
+  background-color: rgb(112, 88, 72);
+}
+#fairy {
+  background-color: rgb(238, 153, 172);
+}
