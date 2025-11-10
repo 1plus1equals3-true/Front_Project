@@ -22,8 +22,8 @@ const typeNamesKorean = {
   dragon: "드래곤",
   dark: "악",
   fairy: "페어리",
-  unknown: "???", // 기타 타입 (선택 사항)
-  shadow: "다크", // 기타 타입 (선택 사항)
+  unknown: "???", // 기타 타입
+  shadow: "다크", // 기타 타입
 };
 
 // 특수폼 한글화
@@ -72,13 +72,12 @@ const MAX_RECENT_SEARCHES = 10; // 저장할 최대 개수
  * @param {string} englishName - 실제 API 검색에 사용된 이름 (영문, 특수폼 포함)
  */
 function saveRecentSearch(koreanName, englishName) {
-  // ⭐ 인수가 2개로 바뀜
   let searches = localStorage.getItem(RECENT_SEARCHES_KEY);
   searches = searches ? JSON.parse(searches) : [];
 
-  const newEntry = { koreanName: koreanName, englishName: englishName }; // ⭐ 객체로 저장
+  const newEntry = { koreanName: koreanName, englishName: englishName };
 
-  // 1. 중복 제거: 기존에 같은 koreanName이 있다면 제거
+  // 1. 중복 제거
   searches = searches.filter((entry) => entry.koreanName !== koreanName);
 
   // 2. 맨 앞에 새 검색어를 추가
@@ -98,7 +97,6 @@ function saveRecentSearch(koreanName, englishName) {
  * @returns {Array<object>} 최근 검색된 포켓몬 이름 객체 배열 ({koreanName, englishName} 형식)
  */
 function getRecentSearches() {
-  // ⭐ 반환 타입이 객체 배열로 변경됨
   const searches = localStorage.getItem(RECENT_SEARCHES_KEY);
   return searches ? JSON.parse(searches) : [];
 }
@@ -109,9 +107,9 @@ function getRecentSearches() {
  * @param {Set<string>} evolutionNamesSet - 수집된 포켓몬 이름 Set (중복 제거용)
  */
 function parseEvolutionChain(chainData, evolutionNamesSet) {
-  // 현재 포켓몬 이름 (영문)을 Set에 추가합니다. (Set은 중복을 자동으로 방지)
+  // 현재 포켓몬 이름 (영문)을 Set에 추가 (Set은 중복을 자동으로 방지)
   const speciesName = chainData.species.name;
-  evolutionNamesSet.add(speciesName); // 👈 수정: Set에 추가 // 다음 진화 단계가 있다면 재귀적으로 호출
+  evolutionNamesSet.add(speciesName);
 
   if (chainData.evolves_to && chainData.evolves_to.length > 0) {
     chainData.evolves_to.forEach((nextChain) => {
@@ -203,21 +201,15 @@ function showEvolutionModal(allSprites) {
 async function getAndRenderEvolution(
   evolutionSpeciesNames,
   currentPokemonName,
-  evolutionDetails // 👈 인수를 받도록 수정
+  evolutionDetails
 ) {
   const container = document.getElementById("evolution-container");
   container.innerHTML = "";
 
-  // 제목 다시 삽입 (HTML에서 이미 삽입됨, 내용만 초기화)
-  // const titleDiv = document.createElement("div");
-  // titleDiv.classList.add("card-title");
-  // titleDiv.textContent = "진화 계열";
-  // container.appendChild(titleDiv);
-
   // 중복 제거 및 순서 유지를 위한 Set 사용 후 Array 변환
   const uniqueNames = [...new Set(evolutionSpeciesNames)];
 
-  // 각 진화체에 대한 Promise를 만듭니다. (Sprite, Forms 정보를 위해)
+  // 각 진화체에 대한 Promise를 생성
   const speciesPromises = uniqueNames.map((name) =>
     fetch(`https://pokeapi.co/api/v2/pokemon-species/${name}/`).then((res) =>
       res.json()
@@ -238,7 +230,7 @@ async function getAndRenderEvolution(
     );
     const stageTag = conditionDetail ? conditionDetail.conditionTag : "";
 
-    // 💡 이미 처리된 기본 폼이면 건너뜁니다. (Species URL로 조회했으므로 고유하지만, 안전을 위해 추가)
+    // 💡 이미 처리된 기본 폼이면 건너뜁니다.
     if (processedSpecies.has(defaultName)) continue;
     processedSpecies.add(defaultName);
 
@@ -684,9 +676,7 @@ function getValues(apiName = null) {
       document.getElementById("pokename").textContent = `${name}`;
 
       // 카드 1 업데이트
-      document.getElementById(
-        "pokedex_id"
-      ).textContent = `전국도감 ${pokeData.id}`;
+      document.getElementById("pokedex_id").textContent = `No. ${pokeData.id}`;
       document.getElementById("sprite-default").src =
         pokeData.sprites.front_default;
       document.getElementById("sprite-shiny").src =
@@ -952,7 +942,8 @@ document.addEventListener("DOMContentLoaded", () => {
       const decodedDisplayName = decodeURIComponent(initialDisplayName);
 
       nameInput.value = decodedDisplayName;
-      getValues(decodedDisplayName);
+      getValues(decodedApiName);
+      //getValues(decodedDisplayName);
     } else {
       // 4B. 메인 페이지로 직접 접근한 경우
       const recentSearches = getRecentSearches(); // getRecentSearches는 이미 객체 배열 반환하도록 수정됨

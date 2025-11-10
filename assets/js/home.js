@@ -174,6 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (query) {
       const encodedQuery = encodeURIComponent(query);
+      // 검색창에서 입력한 이름은 표시용(displayName)과 API 호출용(apiName)을 일단 동일하게 전달
       window.location.href = `/main.html?apiName=${encodedQuery}&displayName=${encodedQuery}`;
     } else {
       alert("검색어를 입력해 주세요.");
