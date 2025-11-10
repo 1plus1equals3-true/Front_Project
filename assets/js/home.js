@@ -29,7 +29,7 @@ const POTD_STORAGE_KEY = "pokemon_of_the_day_id";
  * @returns {number} 오늘의 포켓몬 도감 ID
  */
 function getDailyPokemonId() {
-  const today = new Date().toDateString(); // YYYY-MM-DD 대신 날짜 문자열 사용
+  const today = new Date().toDateString(); // 날짜 문자열 사용
   const storedData = localStorage.getItem(POTD_STORAGE_KEY);
 
   let potdId;
@@ -110,7 +110,6 @@ async function setPokemonOfTheDay() {
     potdLink.href = `/main.html?apiName=${encodedApiName}&displayName=${encodedDisplayName}`;
   } catch (error) {
     console.error("오늘의 포켓몬 설정 중 오류 발생:", error);
-    // 오류 발생 시 기본값 유지 또는 오류 메시지 표시
   }
 }
 
@@ -125,16 +124,16 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------
   // [A] 최근 검색 기록 렌더링 함수
   // ----------------------------------------------------
-  const RECENT_SEARCHES_KEY = "recent_pokemon_searches"; // main.js와 동일해야 합니다.
+  const RECENT_SEARCHES_KEY = "recent_pokemon_searches"; // main.js와 동일해야
 
   function getRecentSearches() {
     const searches = localStorage.getItem(RECENT_SEARCHES_KEY);
-    // 이제 객체 배열을 반환합니다.
+
     return searches ? JSON.parse(searches) : [];
   }
 
   function renderRecentSearches() {
-    const recentSearches = getRecentSearches(); // 객체 배열을 가져옵니다.
+    const recentSearches = getRecentSearches();
     recentSearchList.innerHTML = ""; // 목록 초기화
 
     if (recentSearches.length === 0) {
@@ -144,7 +143,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     noRecentSearchesMsg.style.display = "none";
 
-    // ⭐ item (객체: {koreanName, englishName})으로 순회
+    // item (객체: {koreanName, englishName})으로 순회
     recentSearches.forEach((item) => {
       const listItem = document.createElement("li");
       const link = document.createElement("a");
@@ -154,8 +153,8 @@ document.addEventListener("DOMContentLoaded", () => {
       // 검색창에 표시할 한글 이름도 인코딩
       const encodedDisplayName = encodeURIComponent(item.koreanName);
 
-      // ⭐ 수정: main.html로 이동 시, 검색에 사용할 apiName과 표시할 displayName을 모두 전달
-      link.href = `/main.html?apiName=${encodedApiName}&displayName=${encodedDisplayName}`;
+      // 수정: main.html로 이동 시, 검색에 사용할 apiName과 표시할 displayName을 모두 전달
+      link.href = `/Front_Project/main.html?apiName=${encodedApiName}&displayName=${encodedDisplayName}`;
 
       // 사용자에게는 한글 이름만 표시
       link.textContent = item.koreanName;
@@ -175,7 +174,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (query) {
       const encodedQuery = encodeURIComponent(query);
       // 검색창에서 입력한 이름은 표시용(displayName)과 API 호출용(apiName)을 일단 동일하게 전달
-      window.location.href = `/main.html?apiName=${encodedQuery}&displayName=${encodedQuery}`;
+      window.location.href = `/Front_Project/main.html?apiName=${encodedQuery}&displayName=${encodedQuery}`;
     } else {
       alert("검색어를 입력해 주세요.");
     }
@@ -186,6 +185,4 @@ document.addEventListener("DOMContentLoaded", () => {
   // ----------------------------------------------------
   renderRecentSearches();
   setPokemonOfTheDay();
-
-  // ... (오늘의 포켓몬 로직 등 다른 home.js 내용)
 });

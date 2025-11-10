@@ -1,6 +1,6 @@
 // /assets/js/type.js
 
-// 🚨 main.js와 동일한 타입 데이터가 필요합니다.
+// main.js와 동일한 타입 데이터
 const typeNamesKorean = {
   normal: "노말",
   fighting: "격투",
@@ -86,11 +86,6 @@ async function analyzeAndRenderType(typeNameEng) {
     const renderResults = (results, isAttack) => {
       const prefix = isAttack ? "attack" : "defense";
 
-      // 1배 타입을 계산 (공식 타입 목록에서 2x, 0.5x, 0x에 속하지 않는 모든 타입)
-      // 🚨 1배 타입 계산 로직은 현재 렌더링에 사용되지 않으므로, 2배, 0.5배, 0배만 렌더링합니다.
-      //    이 부분은 복잡하므로 UX상 단순하게 갑니다.
-      // ...
-
       // 2배, 0.5배, 0배 렌더링
       [2, 0.5, 0].forEach((multiplier) => {
         const multiplierKey = `${prefix}-${multiplier
@@ -154,7 +149,7 @@ function renderTypeButtons() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-  // 🚨 1. DOM 요소 캐시를 여기서 다시 수행합니다. (가장 중요)
+  // 1. DOM 요소 캐시를 여기서 다시 수행
   typeButtonsContainer = document.getElementById("type-buttons-container");
   typeResultCard = document.getElementById("type-result-card");
   selectedTypeDisplay = document.getElementById("selected-type-display");

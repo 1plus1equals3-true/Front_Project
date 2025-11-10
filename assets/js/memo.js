@@ -4,10 +4,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const memoList = document.getElementById("memo-list");
   const STORAGE_KEY = "simple_memos";
 
-  // 1. 로컬 스토리지에서 메모 불러오기
+  // 로컬 스토리지에서 메모 불러오기
   function getMemos() {
     const memos = localStorage.getItem(STORAGE_KEY);
-    // 메모는 문자열 배열로 저장됩니다.
+    // 메모는 문자열 배열로 저장
     return memos ? JSON.parse(memos) : [];
   }
 
@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(memos));
   }
 
-  // 3. 메모를 화면에 렌더링 (수정 가능하도록 구조 변경)
+  // 3. 메모를 화면에 렌더링
   function renderMemos() {
     const memos = getMemos();
     memoList.innerHTML = ""; // 기존 목록 초기화
@@ -83,7 +83,7 @@ document.addEventListener("DOMContentLoaded", () => {
     editInput.addEventListener("blur", saveEdit);
   }
 
-  // 5. 메모 추가 처리 (기존과 동일)
+  // 5. 메모 추가 처리
   memoForm.addEventListener("submit", (e) => {
     e.preventDefault();
     const newMemoText = memoInput.value.trim();
@@ -97,7 +97,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // 6. 메모 삭제 처리 (이벤트 위임 사용 - 버튼이 다시 렌더링되므로 리스너는 부모에)
+  // 6. 메모 삭제 처리
   memoList.addEventListener("click", (e) => {
     if (e.target.classList.contains("delete-btn")) {
       const indexToDelete = parseInt(e.target.dataset.index);

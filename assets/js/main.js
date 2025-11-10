@@ -230,7 +230,7 @@ async function getAndRenderEvolution(
     );
     const stageTag = conditionDetail ? conditionDetail.conditionTag : "";
 
-    // 💡 이미 처리된 기본 폼이면 건너뜁니다.
+    // 이미 처리된 기본 폼이면 패스.
     if (processedSpecies.has(defaultName)) continue;
     processedSpecies.add(defaultName);
 
@@ -258,7 +258,7 @@ async function getAndRenderEvolution(
         finalTag = "미진화체";
       } else {
         // 3. 그 외 (중간 진화체 및 최종 진화체): 'Lv. XX' 또는 '조건 진화'가 됨
-        finalTag = stageTag; // <--- 이 부분이 이제 '진화체' 대신 정확한 조건이 됩니다.
+        finalTag = stageTag;
       }
 
       allEvolutionSprites.push({
@@ -335,22 +335,22 @@ async function getAndRenderEvolution(
     const nameIndexA = uniqueNames.indexOf(speciesNameA);
     const nameIndexB = uniqueNames.indexOf(speciesNameB);
 
-    // 포켓몬의 기본 이름이 같지 않다면, 진화 순서대로 정렬합니다.
+    // 포켓몬의 기본 이름이 같지 않다면, 진화 순서대로 정렬.
     if (nameIndexA !== nameIndexB) {
       return nameIndexA - nameIndexB;
     }
 
     // 2. 기본 포켓몬 이름이 같다면 (폼 비교)
-    // - 기본 폼(sortOrder: 1)이 항상 다른 폼(sortOrder: 2 이상)보다 앞에 오도록 보장합니다.
+    // - 기본 폼(sortOrder: 1)이 항상 다른 폼(sortOrder: 2 이상)보다 앞에 오도록 보장.
     if (a.sortOrder !== b.sortOrder) {
       return a.sortOrder - b.sortOrder;
     }
 
-    // 3. sortOrder도 같다면, 폼 태그 이름으로 정렬합니다. (선택적)
+    // 3. sortOrder도 같다면, 폼 태그 이름으로 정렬
     return a.formTag.localeCompare(b.formTag);
   });
 
-  // 중복 스프라이트를 제거합니다 (같은 이름, 같은 폼 태그)
+  // 중복 스프라이트를 제거 (같은 이름, 같은 폼 태그)
   const seen = new Set();
   const finalSprites = allEvolutionSprites.filter((item) => {
     const key = `${item.name}-${item.formTag}-${item.sprite}`;
@@ -364,8 +364,8 @@ async function getAndRenderEvolution(
   // ----------------------------------------------------------------------
   // 6개 이하일 때 모두 표시, 7개 이상일 때 더보기 버튼 사용
   // ----------------------------------------------------------------------
-  const totalCount = finalSprites.length; // 1. '더보기' 버튼이 필요한지 여부 (총 7개 이상일 때만 필요)
-  const requiresMoreButton = totalCount > 6; // 2. 실제로 화면에 표시할 포켓몬 개수 결정
+  const totalCount = finalSprites.length;
+  const requiresMoreButton = totalCount > 6; // 실제로 화면에 표시할 포켓몬 개수 결정
   let limit = totalCount;
   if (requiresMoreButton) {
     // 7개 이상일 경우, 5개만 표시하고 6번째 칸을 버튼에 양보
@@ -427,15 +427,13 @@ function parseEvolutionChainDetails(
           // 레벨 진화
           nextCondition = `Lv. ${detail.min_level}`;
         } else if (detail.item || detail.trigger.name !== "level-up") {
-          // 🚨 'level-up'이 아닌 trigger(trade, happiness 등)는 모두 '조건 진화'로 통일합니다.
+          // 'level-up'이 아닌 trigger(trade, happiness 등)는 모두 '조건 진화'로 통일합니다.
           nextCondition = "조건 진화";
         } else if (
           detail.trigger.name === "level-up" &&
           detail.min_level === null
         ) {
-          // 🚨 레벨업(level-up) 트리거인데 최소 레벨이 없는 경우
-          //    (예: 특정 시간대 레벨업, 특정 아이템 소지 후 레벨업 등 특수조건)
-          //    이 경우도 '조건 진화'로 처리하는 것이 좋습니다.
+          // 레벨업 트리거인데 최소 레벨이 없는 경우
           nextCondition = "조건 진화";
         }
       }
@@ -443,10 +441,7 @@ function parseEvolutionChainDetails(
       parseEvolutionChainDetails(nextChain, evolutionDetails, nextCondition);
     });
   } else {
-    // 💥 중요: chainData.evolves_to가 없으면 (최종 진화체이면)
-    // 여기서 자동으로 함수가 종료되므로, 이 포켓몬의 conditionTag는 '최종 진화체'가 아닌
-    // 'Lv. 16' 같은 이전 단계의 'nextCondition'이 됩니다.
-    // 'getAndRenderEvolution'에서 이 값을 보고 '최종 진화체'로 덮어써야 합니다.
+    // 여기서 최종진화체를 레벨이 아닌 다른 값으로 변경가능
   }
 }
 
@@ -488,7 +483,7 @@ async function showAbilityModal(abilityNameEng) {
     const nameKo =
       data.names.find((n) => n.language.name === "ko")?.name || abilityNameEng;
 
-    // 🚨 여기서 한국어 효과(effect_entries) 또는 긴 설명(flavor_text_entries)을 찾습니다.
+    // 여기서 한국어 효과(effect_entries) 또는 긴 설명(flavor_text_entries)을 찾습니다.
     let effectText = "한국어 설명 없음.";
 
     // 1순위: 효과 설명 (가장 상세함)
@@ -601,7 +596,7 @@ function getValues(apiName = null) {
     // case 1: 진화 계열 클릭 (apiName = 'charizard-mega-x' 등 영문/ID)
     // case 2: 홈에서 이동 (apiName = '피카츄' 등 한글)
 
-    // 만약 전달된 apiName이 한글인 경우 (영문 변환 맵에 존재하면) 영문으로 변환합니다.
+    // 만약 전달된 apiName이 한글인 경우 (영문 변환 맵에 존재하면) 영문으로 변환.
     const convertedEnglishName = getEnglishName(englishName);
 
     if (convertedEnglishName) {
@@ -664,7 +659,7 @@ function getValues(apiName = null) {
       saveRecentSearch(name, englishName);
 
       // ----------------------------------------------------
-      // ⭐ 기존의 모든 DOM 업데이트 로직 ⭐
+      // 기존의 모든 DOM 업데이트 로직
       // ----------------------------------------------------
       console.log(`포켓몬 : ${pokeData.name}`);
 
@@ -712,7 +707,7 @@ function getValues(apiName = null) {
       renderAbilities(pokeData.abilities, "ability-container");
 
       // ----------------------------------------------------
-      // ⭐ 진화 정보 및 타입 상성 준비 ⭐
+      // 진화 정보 및 타입 상성 준비
       // ----------------------------------------------------
 
       // 1. 포켓몬 Species 정보 호출 (Evolution Chain URL을 얻기 위해)
@@ -878,7 +873,7 @@ function getValues(apiName = null) {
       });
     })
     .catch((error) => {
-      console.error("오류 발생:", error.message); // ⭐⭐ 안전한 접근 코드로 수정 ⭐⭐
+      console.error("오류 발생:", error.message);
       const pokenameElement = document.getElementById("pokename");
       if (pokenameElement) {
         pokenameElement.textContent = `${name} (정보 로딩 오류)`;
@@ -905,7 +900,7 @@ function populateDatalist() {
 
 // --- 최종 실행 로직 ---
 document.addEventListener("DOMContentLoaded", () => {
-  // 1. HTML 조각 로드
+  // 1. HTML 로드
   importPage("header");
   importPage("footer");
   importPage("sidenav");
@@ -927,7 +922,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // 3. 폼 제출 이벤트(Enter 키 포함)를 처리합니다.
     if (searchForm) {
       searchForm.addEventListener("submit", (event) => {
-        // ❗ 가장 중요: 폼의 기본 제출 동작(페이지 새로고침)을 막습니다.
+        // 폼의 기본 제출 동작(페이지 새로고침)을 막습니다.
         event.preventDefault();
 
         // 검색 함수를 호출합니다.
