@@ -892,7 +892,7 @@ function getValues(apiName = null) {
 
             typeDiv.addEventListener("click", () => {
               // type.html로 이동하며 쿼리 파라미터로 타입 이름 전달
-              window.location.href = `/type.html?type=${typeName}`;
+              window.location.href = `/Front_Project/type.html?type=${typeName}`;
             });
 
             // 타입 이름을 텍스트로 표시합니다.
