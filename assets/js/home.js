@@ -93,7 +93,7 @@ async function setPokemonOfTheDay() {
     const potdLink = document.getElementById("potd-link");
 
     // 이미지, ID, 이름 업데이트
-    potdSprite.src = data.sprites.front_default || "/assets/img/Poke Ball.webp";
+    potdSprite.src = data.sprites.front_default || "assets/img/Poke Ball.webp";
     potdIdElem.textContent = `No. ${String(data.id).padStart(3, "0")}`;
     potdNameElem.textContent = koreanName;
 
@@ -107,7 +107,7 @@ async function setPokemonOfTheDay() {
     // 링크 업데이트
     const encodedDisplayName = encodeURIComponent(koreanName);
     const encodedApiName = encodeURIComponent(data.id);
-    potdLink.href = `/main.html?apiName=${encodedApiName}&displayName=${encodedDisplayName}`;
+    potdLink.href = `/Front_Project/main.html?apiName=${encodedApiName}&displayName=${encodedDisplayName}`;
   } catch (error) {
     console.error("오늘의 포켓몬 설정 중 오류 발생:", error);
   }

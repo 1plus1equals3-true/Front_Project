@@ -396,6 +396,35 @@ async function getAndRenderEvolution(
 } // <-- getAndRenderEvolution 함수 종료
 
 /**
+ * 검색 오류 모달을 띄우고 닫기 이벤트를 설정합니다.
+ * @param {string} message - 모달에 표시할 메시지
+ */
+function showSearchErrorModal(message) {
+  const modal = document.getElementById("error-search-modal");
+  const modalMessage = document.getElementById("error-modal-message");
+  const closeButton = document.getElementById("error-search-close-button");
+  const confirmButton = document.getElementById("error-modal-confirm-btn");
+
+  if (!modal || !modalMessage) return; // 필수 요소가 없으면 종료
+
+  modalMessage.textContent = message;
+  modal.style.display = "block"; // 닫기 로직
+
+  const closeModal = () => {
+    modal.style.display = "none";
+  };
+
+  closeButton.onclick = closeModal;
+  confirmButton.onclick = closeModal; // 모달 외부 클릭 시 닫기
+
+  window.onclick = function (event) {
+    if (event.target === modal) {
+      closeModal();
+    }
+  };
+}
+
+/**
  * 진화 체인 데이터를 재귀적으로 파싱하여 포켓몬 이름과 진화 조건을 수집합니다.
  * @param {object} chainData - 현재 진화 단계의 chain 객체
  * @param {Array<object>} evolutionDetails - { name, conditionTag } 객체를 담을 배열
@@ -622,6 +651,11 @@ function getValues(apiName = null) {
   // null 체크
   if (englishName === null) {
     console.error(`'${name}'은(는) 등록된 포켓몬 이름이 아닙니다.`);
+    // 검색 오류 모달
+    showSearchErrorModal(
+      `'${name}'은(는) 등록된 포켓몬 이름이 아닙니다.\n포켓몬 이름을 정확히 검색해주세요.`
+    );
+
     document.getElementById(
       "pokename"
     ).textContent = `${name}의 정보는 찾을 수 없습니다.`;
@@ -874,10 +908,44 @@ function getValues(apiName = null) {
     })
     .catch((error) => {
       console.error("오류 발생:", error.message);
+      showSearchErrorModal(
+        `'${name}'의 정보는 존재하지 않습니다.
+        \ntip : 특수폼은 원래 이름을 정확히 입력하세요.
+        \n(오류: ${error.message})`
+      );
       const pokenameElement = document.getElementById("pokename");
       if (pokenameElement) {
-        pokenameElement.textContent = `${name} (정보 로딩 오류)`;
+        pokenameElement.textContent = `${name} \n(정보 로딩 오류)`;
       }
+      // 정보 초기화 로직 시작
+      document.getElementById("pokedex_id").textContent = "";
+      document.getElementById("sprite-default").src =
+        "assets/img/Poke Ball.webp";
+      document.getElementById("sprite-shiny").src =
+        "assets/img/Master Ball.webp";
+      document.getElementById("stat-hp").textContent = "-";
+      document.getElementById("stat-attack").textContent = "-";
+      document.getElementById("stat-defense").textContent = "-";
+      document.getElementById("stat-special-attack").textContent = "-";
+      document.getElementById("stat-special-defense").textContent = "-";
+      document.getElementById("stat-speed").textContent = "-";
+
+      // 특성 컨테이너 초기화
+      const abilityContainer = document.getElementById("ability-container");
+      if (abilityContainer) abilityContainer.innerHTML = "-";
+
+      // 포획률 초기화
+      const catchRateDisplay = document.getElementById("catch-rate-display");
+      if (catchRateDisplay) catchRateDisplay.textContent = "-";
+
+      // 진화 계열 컨테이너 초기화
+      document.getElementById("evolution-container").innerHTML = "";
+      document.getElementById("evolution-loading").style.display = "none";
+
+      // 타입 상성 컨테이너 초기화
+      document.querySelectorAll("#poke-search-card-4 .weak").forEach((div) => {
+        div.innerHTML = "";
+      });
     });
 }
 

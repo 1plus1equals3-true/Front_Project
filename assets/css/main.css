@@ -155,7 +155,9 @@
   color: #ff5722;
   margin-bottom: 5px;
   /* 줄바꿈 방지 */
-  white-space: nowrap;
+  /* white-space: nowrap; */
+  /*줄바꿈*/
+  white-space: pre;
 }
 
 .pokemon-id {
@@ -427,7 +429,7 @@
 }
 
 /* ======================================================================
- * 9.1 특성 정보 모달 (추가)
+ * 9.1 특성 정보 모달
  * ====================================================================== */
 /* 기존 .modal과 .modal-content를 사용하고, 내용물만 추가합니다. */
 .modal-title {
@@ -441,6 +443,44 @@
   font-size: 1em;
   line-height: 1.5;
   /* white-space: pre-wrap; /* 줄바꿈 포함된 텍스트를 유지 */
+}
+
+/* ======================================================================
+ * 9.2 검색 오류 모달 스타일
+ * ====================================================================== */
+#error-search-modal .modal-content {
+  /* 다른 모달과 구분되는 스타일을 원한다면 여기에 추가 */
+  max-width: 400px;
+  text-align: center;
+  padding-bottom: 30px; /* 버튼 공간 확보 */
+}
+
+#error-search-modal h2 {
+  color: #cc0000; /* 빨간색 강조 */
+  margin-bottom: 15px;
+}
+
+#error-modal-message {
+  font-size: 1.1em;
+  margin-bottom: 20px;
+  white-space: pre-wrap;
+}
+
+#error-modal-confirm-btn {
+  /* 확인 버튼 스타일 */
+  padding: 8px 25px;
+  font-size: 1em;
+  font-weight: bold;
+  color: white;
+  background-color: #3f51b5; /* 파란색 계열 */
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.1s;
+}
+
+#error-modal-confirm-btn:hover {
+  background-color: #5d6ed4;
 }
 
 /* ======================================================================
