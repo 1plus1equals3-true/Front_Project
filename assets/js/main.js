@@ -711,6 +711,28 @@ function getValues(apiName = null) {
       document.getElementById("sprite-shiny").src =
         pokeData.sprites.front_shiny;
 
+      // 타입 표시
+      const typeContainer = document.getElementById("pokemon_type");
+      if (typeContainer) {
+        typeContainer.innerHTML = "";
+
+        pokeData.types.forEach((typeInfo) => {
+          const typeNameEng = typeInfo.type.name;
+          const typeNameKo = typeNamesKorean[typeNameEng] || typeNameEng;
+
+          const typeTag = document.createElement("span");
+          typeTag.classList.add("type-tag-small");
+          typeTag.id = typeNameEng;
+          typeTag.textContent = typeNameKo;
+
+          typeTag.addEventListener("click", () => {
+            window.location.href = `/Front_Project/type.html?type=${typeNameEng}`;
+          });
+
+          typeContainer.appendChild(typeTag);
+        });
+      }
+
       // 카드 3 업데이트
       // 스탯 배열 순서: 0:HP, 1:Attack, 2:Defense, 3:Sp.Attack, 4:Sp.Defense, 5:Speed
       const statMapping = [
