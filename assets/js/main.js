@@ -945,6 +945,8 @@ function getValues(apiName = null) {
         "assets/img/Poke Ball.webp";
       document.getElementById("sprite-shiny").src =
         "assets/img/Master Ball.webp";
+      const typeContainer = document.getElementById("pokemon_type");
+      if (typeContainer) typeContainer.innerHTML = "";
       document.getElementById("stat-hp").textContent = "-";
       document.getElementById("stat-attack").textContent = "-";
       document.getElementById("stat-defense").textContent = "-";
